@@ -12,5 +12,5 @@ public class User
 {
     @Id//Anotación, proporcionada por JPA, que marca al atributo de abajo como el Id. Es obligatorio esta anotación.
     @GeneratedValue(strategy = GenerationType.IDENTITY) //Digo que es autoincremental
-    private int id;
+    private Long id;
 }
