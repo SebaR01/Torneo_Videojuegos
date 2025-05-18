@@ -5,13 +5,12 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-@Entity //Anotación, proporcionada por JPA, que marca a la clase como una entidad, lo cual hace que sus atributos sean mapeables en la base de datos. Al ser una entidad, Spring ya toma a la clase como una tabla de la bdd y a sus atributos como los campos
-@Table(name="torneos", schema="public") //Anotación, proporcionada por JPA, que me permite personalizar el nombre de la tabla en la base de datos. Si no pongo esta anotación, el nombre de la tabla será idéntico al nombre de la clase.
-@Data//Anotación, proporcionada por Lombok, que proporciona de manera automática métodos básicos: getter, setter, builder, equals, compareTo, toString y hasDat.
-public class Result
-{
-    @Id//Anotación, proporcionada por JPA, que marca al atributo de abajo como el Id. Es obligatorio esta anotación.
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //Digo que es autoincremental
+@Entity
+@Table(name = "results", schema = "public")
+@Data
+public class Result {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull(message = "You must add a score. Must.")
@@ -23,14 +22,14 @@ public class Result
     private Long scoreLoserTeam;
 
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "tournament_id") // Cambia a una columna única
     private Tournament tournamentId;
 
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "loser_team_id") // Cambia a una columna única
     private Team loserTeamId;
 
     @OneToOne
-    @JoinColumn(name = "id")
-    private Team winerTeamId;
+    @JoinColumn(name = "winner_team_id") // Cambia a una columna única
+    private Team winerTeamId; // Nota: Corrige el typo "winer" a "winner"
 }

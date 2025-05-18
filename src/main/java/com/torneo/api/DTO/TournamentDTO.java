@@ -7,9 +7,13 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class TournamentDTO
@@ -25,6 +29,10 @@ public class TournamentDTO
     private String game;
 
     private GamesCategory gamesCategory;
+
+    private Date dateInit;
+    @Future(message = "La fecha de fin debe estar en el futuro")
+    private Date dateFinish;
 
     private GamesState gamesState;
 

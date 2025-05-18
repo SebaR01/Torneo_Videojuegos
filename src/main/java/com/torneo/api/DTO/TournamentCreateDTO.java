@@ -3,9 +3,13 @@ package com.torneo.api.DTO;
 import ENUMS.GamesCategory;
 import ENUMS.GamesState;
 import com.torneo.api.Models.User;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class TournamentCreateDTO
@@ -21,6 +25,10 @@ public class TournamentCreateDTO
     private String game;
 
     private GamesCategory gamesCategory;
+
+    private Date dateInit;
+    @Future(message = "La fecha de fin debe estar en el futuro")
+    private Date dateFinish;
 
     private GamesState gamesState;
 

@@ -1,5 +1,7 @@
 package com.torneo.api.Services;
 
+import ENUMS.GamesCategory;
+import ENUMS.GamesState;
 import com.torneo.api.DTO.TournamentCreateDTO;
 import com.torneo.api.DTO.TournamentDTO;
 import com.torneo.api.Models.Tournament;
@@ -29,6 +31,19 @@ public class TournamentService
         Tournament savedTournament = tournamentRepository.save(tournament);
 
         return mapToDTO(savedTournament);
+    }
+
+    public List<TournamentDTO> getAllByState(GamesState gamesState)
+    {
+        return tournamentRepository.findByStateContainingIgnoreCase(gamesState).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+    public List<TournamentDTO> getAllByCategory(GamesCategory gamesCategory)
+    {
+        return tournamentRepository.findByCategoryContainingIgnoreCase(gamesCategory).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
     public List<TournamentDTO> getAll() {

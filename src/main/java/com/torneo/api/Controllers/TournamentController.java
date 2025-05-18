@@ -1,5 +1,7 @@
 package com.torneo.api.Controllers;
 
+import ENUMS.GamesCategory;
+import ENUMS.GamesState;
 import com.torneo.api.DTO.TournamentCreateDTO;
 import com.torneo.api.DTO.TournamentDTO;
 import com.torneo.api.Services.ResultService;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping(value = "/api/tournament") //Anotación proporcionada por el módulo de Spring Spring MVC. RequestMapping a nivel clase. Establece la ruta base de todos los métodos de este controlador. O sea, todos los métodos de este controlador tendrán como ruta base /api/libros. Todos los endpoint tendrán esa ruta base. Luego, cambia el método por delante: GET, POST... Por ejemplo, un método con la anotación PostMapping tendrá como ruta o endpoint Post/api/libros...
+//Es que la anotación @RequestMapping a nivel clase se usa para definir la ruta común a todos los endpoints. Luego, en cada método particular de la clase, se definirá el método usando las anotaciones abreviadas de @RequestMapping. Por ejemplo, @GetMapping.
 public class TournamentController
 {
     @Autowired
@@ -43,6 +47,16 @@ public class TournamentController
         return tournamentService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/get/state")
+    public ResponseEntity<List<TournamentDTO>> getAllByState(@RequestParam GamesState gamesState)
+    {
+        return ResponseEntity.ok(tournamentService.getAllByState(gamesState));
+    }
+    @GetMapping("/get/category")
+    public ResponseEntity<List<TournamentDTO>> getAllByCategory(@RequestParam GamesCategory gameCategory) {
+        return ResponseEntity.ok(tournamentService.getAllByCategory(gameCategory));
     }
 
     @DeleteMapping("/{id}") //El método Delete es para borrar.
