@@ -12,7 +12,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Entity
-@Table(name = "torneos", schema = "public")
+@Table(name = "tournaments", schema = "public")
 @Data
 public class Tournament {
     @Id
