@@ -50,5 +50,5 @@ public class Tournament {
 
     @ManyToOne
     @JoinColumn(name = "organizer_id")
-    private User organizerId;
+    private Long organizerId;
 }
