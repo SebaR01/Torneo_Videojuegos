@@ -5,6 +5,7 @@ import com.torneo.api.dto.LoginResponse;
 import com.torneo.api.dto.RegisterRequest;
 import com.torneo.api.services.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthController {
-
-    private final AuthService authService;
+public class AuthController
+{
+    @Autowired
+    private AuthService authService;
 
     // Registro de usuario nuevo
     @PostMapping("/register")

@@ -19,26 +19,26 @@ import java.util.Date;
 @Schema(
         description = "Representa una entidad de torneo, que contiene detalles como el nombre, fechas, juego, categoría, estado y organizador."
 )
-@Entity
-@Table(name = "torneos") //Nombre de la tabla en la base de datos.
-@Data
+@Entity //Gracias a esta anotación @Entity, que me la proporciona la especificación de Spring JPA, esta clase será considerada una entidad; por ende, es una tabla en la base de datos. Los atributos de la clase, por su parte, son campos de dicha tabla.
+@Table(name = "torneos") //Esta anotación también me la proporciona la especificación de Spring JPA. Lo que hace es asignar el nombre de la tabla de la base de datos cuyos campos serán los atributos de la presente clase. Si no utilizo esta anotación, el nombre de la tabla por defecto es el mismo que el de la clase.
+@Data //Anotacion, proporcionada por la especificación de Spring Lombok, que me génera automáticamente varios métodos básicos como los getter, setter, equals, compareTo, ToString..
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Tournament {
 
     @Schema(
-            description = "Identificador único del torneo, generado automáticamente.",
+            description = "Identificador único del torneo, generado automáticamente. Autoincremental",
             example = "1",
             accessMode = Schema.AccessMode.READ_ONLY
     )
-    @Id
+    @Id //Anotación, que también me la proporciona la especificación JPA, que identifica al atributo abajo de ella como el ID de la tabla. Es obligatoria la existencia de esta anotación.
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Schema(
             description = "Nombre del torneo. No puede ser nulo y no debe exceder los 100 caracteres.",
-            example = "Campeonato de eSports de Verano",
+            example = "Campeonato de fifita",
             required = true
     )
     @NotNull(message = "El nombre no puede ser nulo.")
@@ -47,7 +47,7 @@ public class Tournament {
 
     @Schema(
             description = "Fecha de inicio del torneo. No puede ser nula.",
-            example = "2025-06-01T00:00:00Z",
+            example = "2025-06-01",
             required = true
     )
     @NotNull
@@ -55,7 +55,7 @@ public class Tournament {
 
     @Schema(
             description = "Fecha de fin del torneo. Debe ser una fecha futura y no puede ser nula.",
-            example = "2025-06-07T23:59:59Z",
+            example = "2025-06-07",
             required = true
     )
     @NotNull
@@ -72,17 +72,17 @@ public class Tournament {
     private String game;
 
     @Schema(
-            description = "Categoría del juego (por ejemplo, FPS, MOBA, Estrategia).",
+            description = "Categoría del juego (por ejemplo, Sports, Shooter, Estrategia).",
             example = "MOBA",
-            allowableValues = {"FPS", "MOBA", "ESTRATEGIA", "LUCHA", "DEPORTES"}
+            allowableValues = {"SPORTS", "SHOOTER", "ESTRATEGIA", "LUCHA", "SURVIVAL HORROR"}
     )
     @Enumerated(EnumType.STRING)
     private GamesCategory category;
 
     @Schema(
-            description = "Estado actual del torneo (por ejemplo, PLANIFICADO, EN_CURSO, COMPLETADO).",
+            description = "Estado actual del torneo (por ejemplo, ACTIVE, FINISHED, NEXT).",
             example = "PLANIFICADO",
-            allowableValues = {"PLANIFICADO", "EN_CURSO", "COMPLETADO", "CANCELADO"}
+            allowableValues = {"ACTIVE", "FINISHED", "NEXT"}
     )
     @Enumerated(EnumType.STRING)
     private GamesState state;
@@ -92,6 +92,6 @@ public class Tournament {
             example = "1001"
     )
     @ManyToOne
-    @JoinColumn(name = "organizer_id")
+    @JoinColumn(name = "organizer_id") //foraign key
     private Long organizerId;
 }

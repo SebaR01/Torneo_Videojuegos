@@ -9,17 +9,17 @@ import lombok.Data;
 @Schema(
         description = "Representa una entidad de resultado en el sistema, que contiene detalles sobre el resultado de un torneo, incluyendo los puntajes del equipo ganador y perdedor, el torneo asociado y los equipos involucrados."
 )
-@Entity
-@Table(name = "results", schema = "public")
-@Data
+@Entity //Anotación, proporcionada por la especificcación de Spring JPA, que establece que la presente clase es una entidad; por lo tanto, esa una tabla en la base de datos. Por lo tanto, los atributos de Result son campos en la base de datos.
+@Table(name = "results", schema = "public") // Anotación de JPA que define el nombre que la tabla tendrá en la base de datos. Sin esta anotación, el nombre de la tabla será el mismo que el de la clase.
+@Data //Anotación, proporcionada por la especificidad de Spring Lombok, lo que hace es generar, de forma automática, los métodos generales y básicos como getters, setters, equals, ToString y compareTO.
 public class Result {
 
     @Schema(
-            description = "Identificador único del resultado, generado automáticamente.",
+            description = "Identificador único del resultado, generado automáticamente y autoincremental.",
             example = "1",
             accessMode = Schema.AccessMode.READ_ONLY
     )
-    @Id
+    @Id //Anotación, proporcionada por JPA, que marca al atributo por debajo como el campo ID de la tabla
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

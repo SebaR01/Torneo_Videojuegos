@@ -8,6 +8,7 @@ import com.torneo.api.repository.EquipoRepository;
 import com.torneo.api.repository.JugadorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,8 +24,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EquipoService {
 
-    private final EquipoRepository equipoRepository;
-    private final JugadorRepository jugadorRepository;
+    @Autowired
+    private EquipoRepository equipoRepository;
+    @Autowired
+    private JugadorRepository jugadorRepository;
 
     /**
      * Registra un nuevo equipo usando un DTO.

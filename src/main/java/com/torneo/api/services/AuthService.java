@@ -7,6 +7,7 @@ import com.torneo.api.models.User;
 import com.torneo.api.repository.UserRepository;
 import com.torneo.api.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,11 +23,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
-    private final UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private UserRepository userRepository;
+    
+    private  PasswordEncoder passwordEncoder;
+    private  JwtUtil jwtUtil;
+    private  AuthenticationManager authenticationManager;
+    private  UserDetailsServiceImpl userDetailsService;
 
     // Registra un nuevo usuario
     public void register(RegisterRequest request) {

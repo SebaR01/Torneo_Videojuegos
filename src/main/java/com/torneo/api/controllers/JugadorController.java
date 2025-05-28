@@ -4,6 +4,7 @@ import com.torneo.api.dto.JugadorRequestDTO;
 import com.torneo.api.dto.JugadorResponseDTO;
 import com.torneo.api.services.JugadorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @RequestMapping("/api/jugadores")
 @RequiredArgsConstructor
 public class JugadorController {
-
+    @Autowired
     private final JugadorService jugadorService;
 
     /**
