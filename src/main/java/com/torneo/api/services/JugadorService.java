@@ -8,6 +8,7 @@ import com.torneo.api.repository.EquipoRepository;
 import com.torneo.api.repository.JugadorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,13 +22,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class JugadorService {
+    @Autowired
+    private JugadorRepository jugadorRepository;
+    @Autowired
+    private EquipoRepository equipoRepository;
 
-    private final JugadorRepository jugadorRepository;
-    private final EquipoRepository equipoRepository;
-
-    /**
-     * Crea un nuevo jugador con equipos asociados (si se especifican).
-     */
     public JugadorResponseDTO crearJugador(JugadorRequestDTO dto) {
         Set<EquipoEntity> equipos = obtenerEquiposDesdeIds(dto.getEquiposIds());
 

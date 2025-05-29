@@ -2,6 +2,7 @@ package com.torneo.api.dto;
 
 import com.torneo.api.enums.GamesCategory;
 import com.torneo.api.enums.GamesState;
+import com.torneo.api.models.User;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -36,7 +37,7 @@ public class TournamentCreateDTO {
     private GamesState state;
 
     @NotNull
-    private Long organizerId;
+    private User organizerId;
 
     @NotNull
     private Date startDate;

@@ -23,7 +23,7 @@ public class ResultService
 
         result.setTournamentId(resultCreateDTO.getTournamentId());
         result.setLoserTeamId(resultCreateDTO.getLoserTeamId());
-        result.setWinerTeamId(resultCreateDTO.getWinerTeamId());
+        result.setWinnerTeamId(resultCreateDTO.getWinerTeamId());
         result.setScoreWinnerTeam(resultCreateDTO.getScoreWinnerTeam());
         result.setScoreLoserTeam(resultCreateDTO.getScoreLoserTeam());
 
@@ -42,7 +42,7 @@ public class ResultService
 
         result.setTournamentId(resultCreateDTO.getTournamentId());
         result.setLoserTeamId(resultCreateDTO.getLoserTeamId());
-        result.setWinerTeamId(resultCreateDTO.getWinerTeamId());
+        result.setWinnerTeamId(resultCreateDTO.getWinerTeamId());
         result.setScoreWinnerTeam(resultCreateDTO.getScoreWinnerTeam());
         result.setScoreLoserTeam(resultCreateDTO.getScoreLoserTeam());
 
@@ -75,7 +75,7 @@ public class ResultService
         dto.setScoreLoserTeam(result.getScoreLoserTeam());
         dto.setTournamentId(result.getTournamentId());
         dto.setScoreWinnerTeam(result.getScoreWinnerTeam());
-        dto.setWinerTeamId(result.getWinerTeamId());
+        dto.setWinerTeamId(result.getWinnerTeamId());
 
         return dto;
     }

@@ -39,7 +39,7 @@ public class TournamentService {
         tournament.setCategory(tournamentCreateDTO.getCategory());
         tournament.setStartDate(tournamentCreateDTO.getStartDate());
         tournament.setEndDate(tournamentCreateDTO.getEndDate());
-        tournament.setOrganizerId(tournamentCreateDTO.getOrganizerId());
+        tournament.setOrganizerID(tournamentCreateDTO.getOrganizerId());
 
         Tournament savedTournament = tournamentRepository.save(tournament);
         return mapToDTO(savedTournament);
@@ -133,7 +133,7 @@ public class TournamentService {
         dto.setId(tournament.getId());
         dto.setGame(tournament.getGame());
         dto.setName(tournament.getName());
-        dto.setOrganizerId(tournament.getOrganizerId());
+        dto.setOrganizerId(tournament.getOrganizerID());
         dto.setCategory(tournament.getCategory());
         dto.setState(tournament.getState());
         return dto;

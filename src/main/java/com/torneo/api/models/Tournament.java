@@ -92,6 +92,6 @@ public class Tournament {
             example = "1001"
     )
     @ManyToOne
-    @JoinColumn(name = "organizer_id") //foraign key
-    private Long organizerId;
+    @JoinColumn(name = "organizerId") //foraign key
+    private User organizerID;
 }

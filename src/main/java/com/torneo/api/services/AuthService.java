@@ -25,10 +25,13 @@ public class AuthService {
 
     @Autowired
     private UserRepository userRepository;
-    
+    @Autowired
     private  PasswordEncoder passwordEncoder;
+    @Autowired
     private  JwtUtil jwtUtil;
+    @Autowired
     private  AuthenticationManager authenticationManager;
+    @Autowired
     private  UserDetailsServiceImpl userDetailsService;
 
     // Registra un nuevo usuario
