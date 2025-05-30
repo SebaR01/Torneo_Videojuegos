@@ -1,5 +1,6 @@
 package com.torneo.api.controllers;
 
+
 import com.torneo.api.dto.LoginRequest;
 import com.torneo.api.dto.LoginResponse;
 import com.torneo.api.dto.RegisterRequest;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController
 {
-    @Autowired
     private AuthService authService;
 
     // Registro de usuario nuevo

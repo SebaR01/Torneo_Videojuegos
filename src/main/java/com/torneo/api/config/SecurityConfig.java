@@ -1,4 +1,4 @@
-package com.torneo.api.config;
+package com.torneo.api.Config;
 
 import com.torneo.api.security.JwtAuthenticationFilter;
 import com.torneo.api.services.UserDetailsServiceImpl;
@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,9 +23,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 @RequiredArgsConstructor
-@EnableMethodSecurity
-public class SecurityConfig {
+@EnableWebSecurity // Añadido para habilitar la configuración de seguridad web
 
+@EnableMethodSecurity // Habilita anotaciones como @PreAuthorize
+public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsServiceImpl userDetailsService;
 
@@ -40,29 +42,20 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    /**
-     * Este método configura la seguridad de la aplicación.
-     * Permite el acceso sin autenticación a los endpoints de autenticación (/api/auth/**)
-     * y también a la consola H2 (/h2-console/**) para desarrollo con base de datos en memoria.
-     * Desactiva CSRF, usa sesiones sin estado y aplica el filtro JWT a todas las rutas protegidas.
-     *
-     * Funciona tanto con base de datos H2 (modo desarrollo) como con MySQL (modo producción).
-     */
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(csrf -> csrf.disable()) // Desactiva CSRF para APIs REST
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable())) // Necesario para H2 console
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sesiones sin estado
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/register").permitAll()
+                        // Permitir acceso sin autenticación a las rutas públicas
+                        .requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
+                        // Todas las demás rutas requieren autenticación
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
-
 }

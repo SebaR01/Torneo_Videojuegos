@@ -8,6 +8,8 @@ public class TorneoApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TorneoApiApplication.class, args);
+		System.out.println("✅ Aplicación Spring Boot iniciada y corriendo...");
+
 	}
 
 }

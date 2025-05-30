@@ -3,6 +3,7 @@ package com.torneo.api.services;
 import com.torneo.api.dto.LoginRequest;
 import com.torneo.api.dto.LoginResponse;
 import com.torneo.api.dto.RegisterRequest;
+import com.torneo.api.enums.Role;
 import com.torneo.api.models.User;
 import com.torneo.api.repository.UserRepository;
 import com.torneo.api.security.JwtUtil;
@@ -35,13 +36,19 @@ public class AuthService {
     private  UserDetailsServiceImpl userDetailsService;
 
     // Registra un nuevo usuario
-    public void register(RegisterRequest request) {
+    public String register(RegisterRequest request) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("El usuario ya existe");
+        }
+
         User user = User.builder()
                 .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword())) // Encripta la contraseña
+                .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .build();
         userRepository.save(user);
+
+        return jwtUtil.generateToken(user.getUsername());
     }
 
     // Autentica un usuario y genera el token

@@ -13,7 +13,6 @@ import com.torneo.api.enums.Role;
 @Entity
 @Table(name = "users")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class User {
@@ -31,4 +30,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    public User(){}
 }
