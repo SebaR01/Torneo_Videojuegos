@@ -40,7 +40,7 @@ public class TournamentController {
             @ApiResponse(responseCode = "403", description = "Acceso denegado: se requiere rol de administrador")
     }) //OPEN API
     @PostMapping //Anotación proporcionada por Spring MVC. Acordate que el método Post es para crear. Se agrega el POST adelante de todo el endpoint.
-    @PreAuthorize("hasRole('ADMIN')") //Anotación proporcionada por la librería Spring Security. Para usarla, tuve que inyectar la dependencia. Hace que para poder acceder a este endpoint el usuario logueado deba tener el rol 'ADMIN'; sino, tira el error 403.
+   // @PreAuthorize("hasRole('ADMIN')") //Anotación proporcionada por la librería Spring Security. Para usarla, tuve que inyectar la dependencia. Hace que para poder acceder a este endpoint el usuario logueado deba tener el rol 'ADMIN'; sino, tira el error 403.
     public ResponseEntity<TournamentDTO> createTournament(
             @Parameter(description = "Datos del torneo a crear", required = true) //OPEN API
             @Valid @RequestBody TournamentCreateDTO tournamentCreateDTO) {
