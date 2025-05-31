@@ -21,14 +21,25 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController
 {
-    private AuthService authService;
+    private final AuthService authService;
 
     // Registro de usuario nuevo
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+        System.out.println("Recibido el request en /register");
+        if (request == null) System.out.println("Request NULL");
+        else System.out.println("Recibido: " + request);
+
         authService.register(request);
         return ResponseEntity.ok("Usuario registrado correctamente");
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception e) {
+        e.printStackTrace(); // Mostrará la causa en consola
+        return ResponseEntity.status(400).body("Error: " + e.getMessage());
+    }
+
 
     // Login → devuelve el token si es correcto
     @PostMapping("/login")

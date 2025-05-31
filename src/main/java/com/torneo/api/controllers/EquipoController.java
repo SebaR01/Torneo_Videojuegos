@@ -44,7 +44,7 @@ public class EquipoController {
     /**
      * Crea un equipo nuevo. Solo ORGANIZADOR o ADMIN pueden hacerlo.
      */
-    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'JUGADOR')")
     @PostMapping
     public ResponseEntity<EquipoResponseDTO> crearEquipo(@RequestBody EquipoRequestDTO equipoDTO) {
         return ResponseEntity.ok(equipoService.crearEquipo(equipoDTO));
