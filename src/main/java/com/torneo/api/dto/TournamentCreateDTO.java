@@ -36,11 +36,7 @@ public class TournamentCreateDTO {
     @NotNull
     private GamesState state;
 
-<<<<<<< HEAD
-    //@NotNull
-=======
- //   @NotNull
->>>>>>> 75b2b5d44d38194ce8c122b478b6235926802419
+
     private User organizerId;
 
     @NotNull

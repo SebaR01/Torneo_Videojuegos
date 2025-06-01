@@ -42,7 +42,7 @@ public class EquipoController {
     }
 
     /**
-     * Crea un equipo nuevo. Solo ORGANIZADOR o ADMIN pueden hacerlo.
+     * Crea un equipo nuevo. Solo JUGADOR o ADMIN pueden hacerlo.
      */
     @PreAuthorize("hasAnyRole('ADMIN', 'JUGADOR')")
     @PostMapping
@@ -51,7 +51,7 @@ public class EquipoController {
     }
 
     /**
-     * Actualiza los datos de un equipo. Solo ORGANIZADOR o ADMIN pueden hacerlo.
+     * Actualiza los datos de un equipo. Solo JUGADOR o ADMIN pueden hacerlo.
      */
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZADOR')")
     @PutMapping("/{id}")

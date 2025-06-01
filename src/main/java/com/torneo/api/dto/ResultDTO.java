@@ -1,6 +1,5 @@
 package com.torneo.api.dto;
 
-import com.torneo.api.models.Team;
 import com.torneo.api.models.Tournament;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
