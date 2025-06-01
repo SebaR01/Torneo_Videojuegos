@@ -29,13 +29,20 @@ public class TournamentXTeamController
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TournamentXTeamDTO>> getAll()
     {
         return ResponseEntity.ok(tournamentXTeamService.getAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<List<TournamentXTeamDTO>> getAllByTeamId(int teamId)
+    {
+        return ResponseEntity.ok(tournamentXTeamService.getAllByTeamId(teamId));
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTXT(@Parameter(description = "ID del TXT a eliminar", required = true, example = "3") @PathVariable Long id)
+    public ResponseEntity<Void> deleteTXT(@Parameter(description = "ID del TXT a eliminar", required = true, example = "3") @PathVariable Integer id)
     {
         tournamentXTeamService.deleteTournamentxTeam(id);
         return ResponseEntity.noContent().build();

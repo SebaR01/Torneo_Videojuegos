@@ -11,13 +11,15 @@ import java.util.Arrays;
 @SpringBootApplication
 public class TorneoApiApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		SpringApplication.run(TorneoApiApplication.class, args);
 		System.out.println("✅ Aplicación Spring Boot iniciada y corriendo...");
 	}
 
 	@Bean
-	public ApplicationRunner runner(ApplicationContext ctx) {
+	public ApplicationRunner runner(ApplicationContext ctx)
+	{
 		return args -> {
 			System.out.println("==== BEANS REGISTRADOS ====");
 			Arrays.stream(ctx.getBeanDefinitionNames()).forEach(System.out::println);

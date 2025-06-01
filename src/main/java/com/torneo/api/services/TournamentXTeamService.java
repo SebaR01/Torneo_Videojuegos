@@ -1,5 +1,6 @@
 package com.torneo.api.services;
 
+import com.torneo.api.Models.Tournament;
 import com.torneo.api.Models.TournamentXTeam;
 import com.torneo.api.dto.TournamentDTO;
 import com.torneo.api.dto.TournamentXTeamCreateDTO;
@@ -29,6 +30,13 @@ public class TournamentXTeamService
         return mapToDTO(savedTXT);
     }
 
+    public List<TournamentXTeamDTO> getAllByTeamId(int teamId)
+    {
+        return tournamentXTeamRepository.findByequipoEntityId_id(teamId).stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
     public List<TournamentXTeamDTO> getAll()
     {
         return tournamentXTeamRepository.findAll().stream()
@@ -36,7 +44,7 @@ public class TournamentXTeamService
                 .collect(Collectors.toList());
     }
 
-    public void deleteTournamentxTeam (Long id)
+    public void deleteTournamentxTeam (Integer id)
     {
         tournamentXTeamRepository.deleteById(id);
     }

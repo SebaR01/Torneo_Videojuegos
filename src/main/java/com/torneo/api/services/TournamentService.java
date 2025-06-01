@@ -57,6 +57,13 @@ public class TournamentService {
                 .collect(Collectors.toList());
     }
 
+    public List<TournamentDTO> getTournamentsByTeamId(Integer teamId) {
+        List<Tournament> tournaments = tournamentRepository.findByTeamId(teamId);
+        return tournaments.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
     /**
      * Obtiene una lista de torneos filtrados por categoría de juego.
      *
