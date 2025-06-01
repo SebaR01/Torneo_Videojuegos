@@ -1,4 +1,4 @@
-package com.torneo.api.models;
+package com.torneo.api.Models;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,11 +12,11 @@ public class TournamentXTeam
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "tournamentId") //foraign key
     private Tournament tournamentId;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "teamId")
     private EquipoEntity equipoEntityId;
 

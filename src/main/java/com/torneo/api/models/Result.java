@@ -1,4 +1,4 @@
-package com.torneo.api.models;
+package com.torneo.api.Models;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -56,13 +56,13 @@ public class Result {
     )
     @OneToOne
     @JoinColumn(name = "loser_team_id")
-    private Team loserTeamId;
+    private EquipoEntity loserTeamId;
 
     @Schema(
-            description = "Equipo ganador del torneo. Referencia a la entidad Team.",
+            description = "Equipo ganador del torneo. ReEquipoEntity.",
             example = "3"
     )
     @OneToOne
     @JoinColumn(name = "winner_team_id")
-    private Team winnerTeamId; // Corregido el typo de "winerTeamId" a "winnerTeamId"
+    private EquipoEntity winnerTeamId; // Corregido el typo de "winerTeamId" a "winnerTeamId"
 }

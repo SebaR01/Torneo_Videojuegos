@@ -1,4 +1,4 @@
-package com.torneo.api.models;
+package com.torneo.api.Models;
 
 import com.torneo.api.enums.GamesCategory;
 import com.torneo.api.enums.GamesState;

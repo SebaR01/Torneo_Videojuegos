@@ -1,9 +1,9 @@
 package com.torneo.api.services;
 
+import com.torneo.api.Models.TournamentXTeam;
 import com.torneo.api.dto.TournamentDTO;
 import com.torneo.api.dto.TournamentXTeamCreateDTO;
 import com.torneo.api.dto.TournamentXTeamDTO;
-import com.torneo.api.models.TournamentXTeam;
 import com.torneo.api.repository.TournamentRepository;
 import com.torneo.api.repository.TournamentXTeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;

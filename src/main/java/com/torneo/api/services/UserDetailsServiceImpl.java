@@ -1,9 +1,9 @@
 package com.torneo.api.services;
 
-import com.torneo.api.models.User;
 import com.torneo.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,7 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     // Este método se llama automáticamente cuando Spring quiere autenticar a un usuario
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
+        com.torneo.api.Models.User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
 
         // Construye un UserDetails con los datos de nuestro User

@@ -1,7 +1,7 @@
 package com.torneo.api.repository;
 
 
-import com.torneo.api.models.JugadorEntity;
+import com.torneo.api.Models.JugadorEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

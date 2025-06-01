@@ -1,7 +1,8 @@
 package com.torneo.api.dto;
 
-import com.torneo.api.models.EquipoEntity;
-import com.torneo.api.models.Tournament;
+import com.torneo.api.Models.EquipoEntity;
+import com.torneo.api.Models.Tournament;
+
 import jakarta.persistence.*;
 import lombok.Data;
 

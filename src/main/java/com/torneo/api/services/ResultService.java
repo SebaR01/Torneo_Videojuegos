@@ -1,8 +1,8 @@
 package com.torneo.api.services;
 
+import com.torneo.api.Models.Result;
 import com.torneo.api.dto.ResultCreateDTO;
 import com.torneo.api.dto.ResultDTO;
-import com.torneo.api.models.Result;
 import com.torneo.api.repository.ResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

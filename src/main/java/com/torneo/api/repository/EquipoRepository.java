@@ -1,6 +1,6 @@
 package com.torneo.api.repository;
 
-import com.torneo.api.models.EquipoEntity;
+import com.torneo.api.Models.EquipoEntity;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

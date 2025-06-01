@@ -1,6 +1,6 @@
 package com.torneo.api.repository;
 
-import com.torneo.api.models.User;
+import com.torneo.api.Models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,11 +1,11 @@
 package com.torneo.api.services;
 
 
+import com.torneo.api.Models.Tournament;
 import com.torneo.api.dto.TournamentCreateDTO;
 import com.torneo.api.dto.TournamentDTO;
 import com.torneo.api.enums.GamesCategory;
 import com.torneo.api.enums.GamesState;
-import com.torneo.api.models.Tournament;
 import com.torneo.api.repository.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

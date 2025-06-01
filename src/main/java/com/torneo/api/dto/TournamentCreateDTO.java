@@ -1,8 +1,8 @@
 package com.torneo.api.dto;
 
+import com.torneo.api.Models.User;
 import com.torneo.api.enums.GamesCategory;
 import com.torneo.api.enums.GamesState;
-import com.torneo.api.models.User;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

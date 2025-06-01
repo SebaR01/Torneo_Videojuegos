@@ -1,6 +1,7 @@
 package com.torneo.api.dto;
 
-import com.torneo.api.models.Tournament;
+import com.torneo.api.Models.EquipoEntity;
+import com.torneo.api.Models.Tournament;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class ResultDTO
 
     private Tournament tournamentId;
 
-    private Team loserTeamId;
+    private EquipoEntity loserTeamId;
 
-    private Team winerTeamId;
+    private EquipoEntity winerTeamId;
 }

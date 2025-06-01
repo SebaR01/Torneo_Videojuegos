@@ -1,9 +1,10 @@
 package com.torneo.api.services;
 
+import com.torneo.api.Models.EquipoEntity;
+import com.torneo.api.Models.JugadorEntity;
 import com.torneo.api.dto.JugadorRequestDTO;
 import com.torneo.api.dto.JugadorResponseDTO;
-import com.torneo.api.models.EquipoEntity;
-import com.torneo.api.models.JugadorEntity;
+
 import com.torneo.api.repository.EquipoRepository;
 import com.torneo.api.repository.JugadorRepository;
 import jakarta.persistence.EntityNotFoundException;

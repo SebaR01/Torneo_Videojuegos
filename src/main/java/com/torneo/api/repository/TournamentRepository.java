@@ -1,8 +1,8 @@
 package com.torneo.api.repository;
 
+import com.torneo.api.Models.Tournament;
 import com.torneo.api.enums.GamesCategory;
 import com.torneo.api.enums.GamesState;
-import com.torneo.api.models.Tournament;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

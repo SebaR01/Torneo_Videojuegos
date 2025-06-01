@@ -1,4 +1,4 @@
-package com.torneo.api.models;
+package com.torneo.api.Models;
 
 import jakarta.persistence.*;
 import lombok.*;

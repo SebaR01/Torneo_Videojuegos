@@ -1,10 +1,10 @@
 package com.torneo.api.services;
 
+import com.torneo.api.Models.User;
 import com.torneo.api.dto.LoginRequest;
 import com.torneo.api.dto.LoginResponse;
 import com.torneo.api.dto.RegisterRequest;
 import com.torneo.api.enums.Role;
-import com.torneo.api.models.User;
 import com.torneo.api.repository.UserRepository;
 import com.torneo.api.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
