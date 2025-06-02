@@ -1,8 +1,8 @@
 package com.torneo.api.controllers;
 
-import com.torneo.api.dto.JugadorRequestDTO;
-import com.torneo.api.dto.JugadorResponseDTO;
-import com.torneo.api.services.JugadorService;
+import com.torneo.api.dto.PlayerRequestDTO;
+import com.torneo.api.dto.PlayerResponseDTO;
+import com.torneo.api.services.PlayerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +18,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/jugadores")
 @RequiredArgsConstructor
-public class JugadorController {
+public class PlayerController {
     @Autowired
-    private final JugadorService jugadorService;
+    private final PlayerService playerService;
 
     /**
      * Lista todos los jugadores.
@@ -28,8 +28,8 @@ public class JugadorController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public ResponseEntity<List<JugadorResponseDTO>> listarJugadores() {
-        return ResponseEntity.ok(jugadorService.listarJugadores());
+    public ResponseEntity<List<PlayerResponseDTO>> listPlayers() {
+        return ResponseEntity.ok(playerService.listPlayers());
     }
 
     /**
@@ -37,8 +37,8 @@ public class JugadorController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public ResponseEntity<JugadorResponseDTO> buscarJugadorPorId(@PathVariable Integer id) {
-        return ResponseEntity.ok(jugadorService.buscarJugadorPorId(id));
+    public ResponseEntity<PlayerResponseDTO> findPlayerById(@PathVariable Integer id) {
+        return ResponseEntity.ok(playerService.findPlayerById(id));
     }
 
     /**
@@ -46,8 +46,8 @@ public class JugadorController {
      */
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZADOR')")
     @PostMapping
-    public ResponseEntity<JugadorResponseDTO> crearJugador(@RequestBody JugadorRequestDTO jugadorDTO) {
-        return ResponseEntity.ok(jugadorService.crearJugador(jugadorDTO));
+    public ResponseEntity<PlayerResponseDTO> createPlayer(@RequestBody PlayerRequestDTO playerDTO) {
+        return ResponseEntity.ok(playerService.createPlayer(playerDTO));
     }
 
     /**
@@ -55,9 +55,9 @@ public class JugadorController {
      */
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZADOR')")
     @PutMapping("/{id}")
-    public ResponseEntity<JugadorResponseDTO> actualizarJugador(@PathVariable Integer id,
-                                                                @RequestBody JugadorRequestDTO jugadorDTO) {
-        return ResponseEntity.ok(jugadorService.actualizarJugador(id, jugadorDTO));
+    public ResponseEntity<PlayerResponseDTO> updatePlayer (@PathVariable Integer id,
+                                                                @RequestBody PlayerRequestDTO playerDTO) {
+        return ResponseEntity.ok(playerService.updatePlayer(id, playerDTO));
     }
 
     /**
@@ -65,8 +65,8 @@ public class JugadorController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarJugador(@PathVariable Integer id) {
-        jugadorService.eliminarJugador(id);
+    public ResponseEntity<Void> deletePlayer (@PathVariable Integer id) {
+        playerService.deletePlayer(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -75,8 +75,8 @@ public class JugadorController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/equipo/{equipoId}")
-    public ResponseEntity<List<JugadorResponseDTO>> listarPorEquipo(@PathVariable Integer equipoId) {
-        return ResponseEntity.ok(jugadorService.listarJugadoresPorEquipo(equipoId));
+    public ResponseEntity<List<PlayerResponseDTO>> listByTeam(@PathVariable Integer teamId) {
+        return ResponseEntity.ok(playerService.listPlayersByTeam(teamId));
     }
 
     /**
@@ -84,7 +84,7 @@ public class JugadorController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/torneo/{torneoId}")
-    public ResponseEntity<List<JugadorResponseDTO>> listarPorTorneo(@PathVariable Integer torneoId) {
-        return ResponseEntity.ok(jugadorService.listarJugadoresPorTorneo(torneoId));
+    public ResponseEntity<List<PlayerResponseDTO>> listByTournament(@PathVariable Integer tournamentId) {
+        return ResponseEntity.ok(playerService.listPlayersByTournament(tournamentId));
     }
 }

@@ -1,8 +1,8 @@
 package com.torneo.api.controllers;
 
-import com.torneo.api.dto.EquipoRequestDTO;
-import com.torneo.api.dto.EquipoResponseDTO;
-import com.torneo.api.services.EquipoService;
+import com.torneo.api.dto.TeamRequestDTO;
+import com.torneo.api.dto.TeamResponseDTO;
+import com.torneo.api.services.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +18,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/equipos")
 @RequiredArgsConstructor
-public class EquipoController {
+public class TeamController {
 
     @Autowired
-    private final EquipoService equipoService;
+    private final TeamService teamService;
 
     /**
      * Devuelve todos los equipos.
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public ResponseEntity<List<EquipoResponseDTO>> listarEquipos() {
-        return ResponseEntity.ok(equipoService.listarEquipos());
+    public ResponseEntity<List<TeamResponseDTO>> listarEquipos() {
+        return ResponseEntity.ok(teamService.listTeams());
     }
 
     /**
@@ -37,8 +37,8 @@ public class EquipoController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public ResponseEntity<EquipoResponseDTO> buscarEquipoPorId(@PathVariable Integer id) {
-        return ResponseEntity.ok(equipoService.buscarEquipoPorId(id));
+    public ResponseEntity<TeamResponseDTO> findTeamsById (@PathVariable Integer id) {
+        return ResponseEntity.ok(teamService.findTeamById(id));
     }
 
     /**
@@ -46,8 +46,8 @@ public class EquipoController {
      */
     @PreAuthorize("hasAnyRole('ADMIN', 'JUGADOR')")
     @PostMapping
-    public ResponseEntity<EquipoResponseDTO> crearEquipo(@RequestBody EquipoRequestDTO equipoDTO) {
-        return ResponseEntity.ok(equipoService.crearEquipo(equipoDTO));
+    public ResponseEntity<TeamResponseDTO> crearEquipo(@RequestBody TeamRequestDTO teamDTO) {
+        return ResponseEntity.ok(teamService.createTeam(teamDTO));
     }
 
     /**
@@ -55,9 +55,9 @@ public class EquipoController {
      */
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZADOR')")
     @PutMapping("/{id}")
-    public ResponseEntity<EquipoResponseDTO> actualizarEquipo(@PathVariable Integer id,
-                                                              @RequestBody EquipoRequestDTO equipoDTO) {
-        return ResponseEntity.ok(equipoService.actualizarEquipo(id, equipoDTO));
+    public ResponseEntity<TeamResponseDTO> updateTeam(@PathVariable Integer id,
+                                                              @RequestBody TeamRequestDTO teamDTO) {
+        return ResponseEntity.ok(teamService.updateTeam(id, teamDTO));
     }
 
     /**
@@ -65,8 +65,8 @@ public class EquipoController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarEquipo(@PathVariable Integer id) {
-        equipoService.eliminarEquipo(id);
+    public ResponseEntity<Void> deleteTeam (@PathVariable Integer id) {
+        teamService.deleteTeam(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -75,7 +75,7 @@ public class EquipoController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/torneo/{torneoId}")
-    public ResponseEntity<List<EquipoResponseDTO>> listarEquiposPorTorneo(@PathVariable Integer torneoId) {
-        return ResponseEntity.ok(equipoService.filtrarEquiposPorTorneoId(torneoId));
+    public ResponseEntity<List<TeamResponseDTO>> listTeamsByTournament(@PathVariable Integer tournamentId) {
+        return ResponseEntity.ok(teamService.filterTeamsByTournamentId(tournamentId));
     }
 }

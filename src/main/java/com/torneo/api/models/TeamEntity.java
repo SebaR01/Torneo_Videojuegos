@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EquipoEntity {
+public class TeamEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,8 @@ public class EquipoEntity {
 
     @NotNull
     @Size(max = 50)
-    private String nombre;
+    @Column(name = "nombre")
+    private String name;
 
     @ManyToMany
     @JoinTable(
@@ -34,8 +35,8 @@ public class EquipoEntity {
             joinColumns = @JoinColumn(name = "equipo_id"),
             inverseJoinColumns = @JoinColumn(name = "jugador_id")
     )
-    private Set<JugadorEntity> jugadores;
+    private Set<PlayerEntity> players;
 
     @Column(name = "torneo_id")
-    private Long torneoId;
+    private Long tournamentId;
 }

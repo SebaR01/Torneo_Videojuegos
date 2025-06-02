@@ -23,4 +23,5 @@ public class TorneoApiApplication {
 			Arrays.stream(ctx.getBeanDefinitionNames()).forEach(System.out::println);
 		};
 	}
+
 }

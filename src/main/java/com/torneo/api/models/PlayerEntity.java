@@ -12,12 +12,12 @@ import java.util.Set;
  */
 
 @Entity
-@Table(name = "jugadores")
+@Table(name = "players")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class JugadorEntity {
+public class PlayerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,17 +28,17 @@ public class JugadorEntity {
     private String nickname;
 
     @NotNull
-    private String nombre;
+    private String name;
 
     @NotNull
-    private String apellido;
+    private String lastName;
 
     @Email
     private String email;
 
     @Min(13)
-    private Integer edad;
+    private Integer age;
 
-    @ManyToMany(mappedBy = "jugadores")
-    private Set<EquipoEntity> equipos;
+    @ManyToMany(mappedBy = "players")
+    private Set<TeamEntity> teams;
 }
