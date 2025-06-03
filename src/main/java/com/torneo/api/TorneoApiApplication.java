@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.Arrays;
 
 @SpringBootApplication
-public class TorneoApiApplication {
+public class MTorneoApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(TorneoApiApplication.class, args);

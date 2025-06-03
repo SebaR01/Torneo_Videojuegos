@@ -40,7 +40,7 @@ public class TournamentCreateDTO {
     private User organizerId;
 
     @NotNull
-    private Date startDate;
+    private  Date startDate;
 
     @NotNull
     @Future(message = "La fecha de fin debe estar en el futuro")
