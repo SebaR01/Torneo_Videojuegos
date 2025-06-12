@@ -1,21 +1,23 @@
+/**
+ * Entidad que representa un equipo participante en torneos de videojuegos.
+ *
+ * ✔ Tiene nombre único.
+ * ✔ Se relaciona con un torneo específico (`ManyToOne`).
+ * ✔ Puede tener múltiples jugadores (`OneToMany` con `PlayerEntity`).
+ * ✔ Puede estar inscrito en múltiples torneos mediante `Inscription`.
+ */
+
 package com.torneo.api.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
-/**
- * ✅ Representa un equipo dentro del sistema.
- *
- * 🔹 Cada equipo tiene un nombre, país y un capitán asignado.
- * 🔹 Puede tener varios jugadores (relación @ManyToMany con PlayerEntity).
- * 🔹 Se relaciona con un torneo por su ID (Long).
- */
 @Entity
 @Table(name = "teams")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,29 +25,25 @@ public class TeamEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // ✅ ID Long para mantener coherencia
+    private Long id;
 
-    @NotBlank(message = "El nombre del equipo no puede estar vacío.")
+    @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    @NotBlank(message = "El país no puede estar vacío.")
-    private String country;
+    // Relación con torneo (opcional)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament_id")
+    private Tournament tournament;
 
-    // ✅ Capitán del equipo: relación con un jugador
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "captain_id")
-    private PlayerEntity captain;
+    // Jugadores del equipo
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlayerEntity> players;
 
-    // ✅ Relación muchos a muchos con jugadores
-    @ManyToMany
-    @JoinTable(
-            name = "team_player",
-            joinColumns = @JoinColumn(name = "team_id"),
-            inverseJoinColumns = @JoinColumn(name = "player_id")
-    )
-    private Set<PlayerEntity> players;
+    // Inscripciones a torneos
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Inscription> inscriptions;
 
-    // ✅ Relación con torneo (por ID, no entidad)
-    @Column(name = "tournament_id", nullable = false)
-    private Long tournamentId;
+    @Column(nullable = false, unique = true)
+    private String email;
+
 }

@@ -2,6 +2,7 @@ package com.torneo.api.models;
 
 import com.torneo.api.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,17 +11,11 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Esta clase representa a un usuario registrado en el sistema de torneos.
- * Cada usuario tiene un `username` único, un `email`, una `password` cifrada,
- * y un `role` (ADMIN, ORGANIZADOR, JUGADOR).
- *
- * Implementa la interfaz `UserDetails` de Spring Security, lo que permite que
- * la clase sea utilizada directamente en el proceso de autenticación JWT.
- *
- * El campo `email` es obligatorio y único, y puede utilizarse también como
- * dato de contacto o login.
+ * Entidad que representa a un usuario del sistema.
+ * Implementa UserDetails para integrarse con Spring Security.
+ * Cada usuario tiene un username único, contraseña cifrada,
+ * un email único y un rol definido (ADMIN, ORGANIZER o PLAYER).
  */
-
 @Entity
 @Table(name = "users")
 @Data
@@ -41,34 +36,36 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull(message = "El rol es obligatorio")
     private Role role;
+
 
     @Column(unique = true, nullable = false)
     private String email;
 
-    // Implementación obligatoria para UserDetails
+    // Métodos requeridos por UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(role); // asumiendo que Role implementa GrantedAuthority
+        return Collections.singleton(role);
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // no controlamos expiración
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // no controlamos bloqueo
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // no controlamos expiración de credenciales
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // asumimos que todos los usuarios están habilitados
+        return true;
     }
 }

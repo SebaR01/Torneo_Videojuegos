@@ -1,19 +1,25 @@
+/**
+ * Entidad que representa la inscripción de un equipo a un torneo.
+ *
+ * ✔ Cada inscripción tiene una fecha y un costo.
+ * ✔ Se relaciona con un equipo (`TeamEntity`) y un torneo (`Tournament`).
+ * ✔ Los jugadores quedan automáticamente vinculados a través del equipo.
+ *
+ * ⚠ Esta inscripción NO es por jugador individual, sino por equipo completo.
+ *    Es decir, cuando un equipo se inscribe, todos sus jugadores participan del torneo.
+ */
+
 package com.torneo.api.models;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
-/**
- * ✅ Representa la inscripción de un equipo a un torneo.
- *
- * 🔹 Se vincula con un equipo y un torneo (ambos obligatorios).
- * 🔹 Registra la fecha de inscripción.
- */
 @Entity
 @Table(name = "inscriptions")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,17 +29,17 @@ public class Inscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ✅ Relación con equipo
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    private LocalDate date;
+
+    @Column(nullable = false)
+    private Double cost;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = false)
     private TeamEntity team;
 
-    // ✅ Relación con torneo
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
-
-    // ✅ Fecha en la que se registró la inscripción
-    @Column(name = "fecha_inscripcion", nullable = false)
-    private LocalDateTime fechaInscripcion;
 }

@@ -1,27 +1,33 @@
+/**
+ * DTO de salida que representa un resultado ya registrado.
+ *
+ * ✔ Contiene IDs del torneo, del equipo ganador y perdedor.
+ * ✔ Incluye los puntajes obtenidos por cada equipo.
+ * ✔ Es devuelto al frontend luego de crear, consultar o modificar un resultado.
+ *
+ * Este DTO permite mostrar de forma clara los resultados registrados en la base
+ * sin exponer entidades completas.
+ */
+
 package com.torneo.api.dto;
 
-import com.torneo.api.models.TeamEntity;
-import com.torneo.api.models.Tournament;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 
 @Data
-public class ResultDTO
-{
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ResultDTO {
+
     private Long id;
 
-    @NotNull(message = "You must add a score. Must.")
-    @Min(value = 0, message = "min value is 0.")
-    private Long scoreWinnerTeam;
+    private Long tournamentId;
 
-    @NotNull
-    @Min(value = 0, message = "min value is 0.")
-    private Long scoreLoserTeam;
+    private Long winerTeamId;
 
-    private Tournament tournamentId;
+    private Long loserTeamId;
 
-    private TeamEntity loserTeamId;
+    private Integer scoreWinnerTeam;
 
-    private TeamEntity winerTeamId;
+    private Integer scoreLoserTeam;
 }

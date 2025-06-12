@@ -1,16 +1,20 @@
+/**
+ * Entidad que representa un partido entre dos equipos dentro de un torneo.
+ *
+ * ✔ Cada partido pertenece a un torneo.
+ * ✔ Tiene un equipo 1, equipo 2, sus respectivos puntajes y un estado (ej. "PENDIENTE", "FINALIZADO").
+ * ✔ Se usa para programar y registrar resultados de enfrentamientos.
+ */
+
 package com.torneo.api.models;
 
-import com.torneo.api.enums.MatchStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-/**
- * Representa un partido entre dos equipos dentro de un torneo.
- * Se usa para planificar y registrar resultados en un torneo tipo "todos contra todos".
- */
 @Entity
 @Table(name = "matches")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -20,19 +24,27 @@ public class Match {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    // Relación con torneo
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "team_a_id")
-    private TeamEntity teamA;
+    // Equipo 1
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "first_team_id", nullable = false)
+    private TeamEntity firstTeam;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "team_b_id")
-    private TeamEntity teamB;
+    // Equipo 2
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "second_team_id", nullable = false)
+    private TeamEntity secondTeam;
 
-    private String resultado; // Ejemplo: "3-1", "Empate", o null si no se jugó
+    @Column(nullable = false)
+    private Integer firstTeamScore;
 
-    @Enumerated(EnumType.STRING)
-    private MatchStatus status;
+    @Column(nullable = false)
+    private Integer secondTeamScore;
+
+    @Column(nullable = false)
+    private String status;
 }

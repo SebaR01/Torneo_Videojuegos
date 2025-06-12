@@ -1,111 +1,97 @@
+/**
+ * Servicio que gestiona la lógica de negocio relacionada a jugadores.
+ *
+ * ✔ Permite crear, actualizar, eliminar y buscar jugadores.
+ * ✔ Filtra jugadores por equipo y por torneo.
+ * ✔ Se apoya en DTOs y en validaciones.
+ */
+
 package com.torneo.api.services;
 
 import com.torneo.api.dto.PlayerRequestDTO;
 import com.torneo.api.dto.PlayerResponseDTO;
-import com.torneo.api.models.TeamEntity;
+import com.torneo.api.exceptions.NotFoundException;
 import com.torneo.api.models.PlayerEntity;
-import com.torneo.api.repository.TeamRepository;
+import com.torneo.api.models.TeamEntity;
 import com.torneo.api.repository.PlayerRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.torneo.api.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Servicio que gestiona la lógica de jugadores.
- * Usa DTOs para recibir y devolver información, validando referencias a equipos.
- */
 @Service
 @RequiredArgsConstructor
 public class PlayerService {
 
-    @Autowired
-    private PlayerRepository playerRepository;
-
-    @Autowired
-    private TeamRepository teamRepository;
+    private final PlayerRepository playerRepository;
+    private final TeamRepository teamRepository;
 
     public PlayerResponseDTO createPlayer(PlayerRequestDTO dto) {
-        Set<TeamEntity> teams = getTeamsById(dto.getTeamsIds());
+        TeamEntity team = teamRepository.findById(dto.getTeamId())
+                .orElseThrow(() -> new NotFoundException("Equipo no encontrado"));
 
         PlayerEntity player = PlayerEntity.builder()
-                .nickname(dto.getNickname())
                 .name(dto.getName())
-                .lastName(dto.getLastName())
-                .email(dto.getEmail())
-                .age(dto.getAge())
-                .teams(teams)
+                .nickname(dto.getNickname())
+                .team(team)
                 .build();
 
-        return toDTO(playerRepository.save(player));
+        return mapToDTO(playerRepository.save(player));
     }
 
     public PlayerResponseDTO updatePlayer(Long id, PlayerRequestDTO dto) {
         PlayerEntity player = playerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Jugador con ID " + id + " no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Jugador no encontrado"));
 
-        player.setNickname(dto.getNickname());
+        TeamEntity team = teamRepository.findById(dto.getTeamId())
+                .orElseThrow(() -> new NotFoundException("Equipo no encontrado"));
+
         player.setName(dto.getName());
-        player.setLastName(dto.getLastName());
-        player.setEmail(dto.getEmail());
-        player.setAge(dto.getAge());
-        player.setTeams(getTeamsById(dto.getTeamsIds()));
+        player.setNickname(dto.getNickname());
+        player.setTeam(team);
 
-        return toDTO(playerRepository.save(player));
+        return mapToDTO(playerRepository.save(player));
     }
 
     public void deletePlayer(Long id) {
+        if (!playerRepository.existsById(id)) {
+            throw new NotFoundException("Jugador no encontrado");
+        }
         playerRepository.deleteById(id);
     }
 
     public PlayerResponseDTO findPlayerById(Long id) {
         return playerRepository.findById(id)
-                .map(this::toDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Jugador con ID " + id + " no encontrado"));
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new NotFoundException("Jugador no encontrado"));
     }
 
     public List<PlayerResponseDTO> listPlayers() {
         return playerRepository.findAll().stream()
-                .map(this::toDTO)
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<PlayerResponseDTO> listPlayersByTeam(Long teamId) {
-        return playerRepository.findPlayersByTeamId(teamId).stream()
-                .map(this::toDTO)
+        return playerRepository.findByTeamId(teamId).stream()
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     public List<PlayerResponseDTO> listPlayersByTournament(Long tournamentId) {
-        return playerRepository.findPlayerByTournamentId(tournamentId).stream()
-                .map(this::toDTO)
+        return playerRepository.findByTeam_Tournament_Id(tournamentId).stream()
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-    // -------------------- Métodos auxiliares --------------------
-
-    private Set<TeamEntity> getTeamsById(Set<Long> ids) {
-        return ids == null ? Set.of() : ids.stream()
-                .map(id -> teamRepository.findById(id)
-                        .orElseThrow(() -> new EntityNotFoundException("Equipo con ID " + id + " no encontrado")))
-                .collect(Collectors.toSet());
-    }
-
-    private PlayerResponseDTO toDTO(PlayerEntity player) {
+    private PlayerResponseDTO mapToDTO(PlayerEntity player) {
         return PlayerResponseDTO.builder()
                 .id(player.getId())
-                .nickname(player.getNickname())
                 .name(player.getName())
-                .lastName(player.getLastName())
-                .email(player.getEmail())
-                .age(player.getAge())
-                .teamsIds(player.getTeams().stream()
-                        .map(TeamEntity::getId)
-                        .collect(Collectors.toSet()))
+                .nickname(player.getNickname())
+                .teamName(player.getTeam().getName())
                 .build();
     }
 }

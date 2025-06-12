@@ -1,13 +1,13 @@
 package com.torneo.api.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
 /**
- * Este DTO se usa para devolver el token JWT al usuario después de iniciar sesión.
- * Solo contiene el token generado.
+ * DTO que representa la respuesta del login.
+ * Contiene el token JWT generado.
  */
-@Data
+@Getter
 @AllArgsConstructor
 public class LoginResponse {
     private String token;

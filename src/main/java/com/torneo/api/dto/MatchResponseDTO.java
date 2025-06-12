@@ -1,13 +1,17 @@
 package com.torneo.api.dto;
 
-import com.torneo.api.enums.MatchStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
- * DTO que representa la información devuelta al consultar un partido.
- * Contiene los IDs de los equipos y el estado del partido.
+ * DTO de respuesta que representa un partido ya registrado.
+ *
+ * Incluye el ID del partido, nombres de los equipos, ID del torneo, fecha y (opcionalmente) resultado.
+ * Este objeto se devuelve en las respuestas del controlador (GET, POST, PUT).
  */
 @Data
 @NoArgsConstructor
@@ -15,11 +19,10 @@ import java.time.LocalDateTime;
 @Builder
 public class MatchResponseDTO {
     private Long id;
-    private Long tournamentId;
-    private Long firstTeamId;
-    private Long secondTeamId;
-    private LocalDateTime matchDate;
+    private String tournamentName;
+    private String firstTeamName;
+    private String secondTeamName;
     private Integer firstTeamScore;
     private Integer secondTeamScore;
-    private MatchStatus status;
+    private String status;
 }

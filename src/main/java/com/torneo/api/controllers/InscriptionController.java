@@ -1,53 +1,54 @@
 package com.torneo.api.controllers;
 
-import com.torneo.api.models.Inscription;
+import com.torneo.api.dto.InscriptionRequestDTO;
+import com.torneo.api.dto.InscriptionResponseDTO;
 import com.torneo.api.services.InscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Controlador REST que gestiona las inscripciones de equipos a torneos.
- *
- * Este controlador expone endpoints protegidos para:
- * ✅ Registrar una nueva inscripción, validando fecha de inicio y cupo.
- * ✅ Cancelar una inscripción existente.
- *
- * Al registrar una inscripción:
- * 🔸 Se guarda la relación equipo/torneo en la base de datos.
- * 🔸 Se envía automáticamente un correo de confirmación al capitán del equipo.
- * 🔸 Se notifica por correo al organizador del torneo.
- *
- * Requiere autenticación JWT y roles con permisos adecuados (ej. ADMIN u ORGANIZADOR).
- */
+import java.util.List;
 
+/**
+ * Controlador REST para gestionar inscripciones de equipos en torneos.
+ * Permite registrar, listar y eliminar inscripciones.
+ */
 @RestController
-@RequestMapping("/api/inscripciones")
+@RequestMapping("/api/inscriptions")
 @RequiredArgsConstructor
 public class InscriptionController {
 
     private final InscriptionService inscriptionService;
 
-    /**
-     * Endpoint para inscribir un equipo a un torneo.
-     * Requiere rol ADMIN u ORGANIZADOR.
-     */
-    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZADOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     @PostMapping
-    public ResponseEntity<Inscription> inscribirEquipo(@RequestBody Inscription inscripcion) {
-        Inscription saved = inscriptionService.inscribir(inscripcion);
-        return ResponseEntity.ok(saved);
+    public ResponseEntity<InscriptionResponseDTO> register(@RequestBody InscriptionRequestDTO dto) {
+        return ResponseEntity.ok(inscriptionService.registerInscription(dto));
     }
 
-    /**
-     * Endpoint para cancelar una inscripción por ID.
-     * Requiere rol ADMIN u ORGANIZADOR.
-     */
-    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZADOR')")
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping
+    public ResponseEntity<List<InscriptionResponseDTO>> getAll() {
+        return ResponseEntity.ok(inscriptionService.getAll());
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/tournament/{tournamentId}")
+    public ResponseEntity<List<InscriptionResponseDTO>> getByTournament(@PathVariable Long tournamentId) {
+        return ResponseEntity.ok(inscriptionService.getByTournament(tournamentId));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/team/{teamId}")
+    public ResponseEntity<List<InscriptionResponseDTO>> getByTeam(@PathVariable Long teamId) {
+        return ResponseEntity.ok(inscriptionService.getByTeam(teamId));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> cancelarInscripcion(@PathVariable Long id) {
-        inscriptionService.cancelarInscripcion(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        inscriptionService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

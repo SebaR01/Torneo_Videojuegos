@@ -3,22 +3,21 @@ package com.torneo.api.enums;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
- * Este enum define los distintos roles posibles que puede tener un usuario en el sistema:
- * - ADMIN → acceso completo, incluyendo creación y eliminación.
- * - ORGANIZADOR → puede gestionar equipos, jugadores y torneos.
- * - JUGADOR → puede ver datos, inscribirse y crear equipos propios.
+ * Enum que representa los roles posibles de un usuario en el sistema:
+ * - ADMIN → acceso completo
+ * - ORGANIZER → gestiona equipos, torneos y resultados
+ * - PLAYER → solo visualiza e interactúa con sus propios datos
  *
- * Cada valor del enum actúa como una autoridad dentro de Spring Security,
- * gracias a que implementa la interfaz `GrantedAuthority`. Esto permite usarlo
- * directamente en validaciones como `@PreAuthorize("hasRole('ADMIN')")`.
+ * Implementa GrantedAuthority para integrarse con Spring Security.
  */
+
 public enum Role implements GrantedAuthority {
     ADMIN,
-    ORGANIZADOR,
-    JUGADOR;
+    ORGANIZER,
+    PLAYER;
 
     @Override
     public String getAuthority() {
-        return "ROLE_" + name(); // ✅ esto es lo que espera Spring Security
+        return name();
     }
 }

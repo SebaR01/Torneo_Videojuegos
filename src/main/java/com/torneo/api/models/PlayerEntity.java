@@ -1,21 +1,18 @@
 package com.torneo.api.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.util.Set;
-
 /**
- * ✅ Representa a un jugador del sistema.
+ * Entidad que representa a un jugador dentro de un equipo.
  *
- * 🔹 Cada jugador tiene un nickname, nombre, apellido, email y edad.
- * 🔹 Puede formar parte de uno o varios equipos (relación @ManyToMany).
- * 🔹 Esta clase usa Long como tipo de ID para mantener coherencia en todo el sistema.
+ * ✔ Cada jugador tiene un nombre, un apodo y pertenece a un equipo.
  */
+
 @Entity
 @Table(name = "players")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,24 +20,15 @@ public class PlayerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // ✅ ID unificado como Long
+    private Long id;
 
-    @NotNull
-    @Size(max = 50)
-    private String nickname;
-
-    @NotNull
+    @Column(nullable = false)
     private String name;
 
-    @NotNull
-    private String lastName;
+    @Column(nullable = false)
+    private String nickname;
 
-    @Email
-    private String email;
-
-    @Min(13)
-    private Integer age;
-
-    @ManyToMany(mappedBy = "players")
-    private Set<TeamEntity> teams;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id", nullable = false)
+    private TeamEntity team;
 }

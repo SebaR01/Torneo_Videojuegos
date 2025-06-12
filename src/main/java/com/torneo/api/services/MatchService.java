@@ -1,127 +1,112 @@
+/**
+ * Servicio que gestiona la lógica de los partidos (matches) entre equipos.
+ *
+ * ✔ Permite crear, editar, eliminar y listar partidos.
+ * ✔ Cada partido pertenece a un torneo.
+ * ✔ Cada partido tiene dos equipos, sus puntajes y un estado (ej. PENDIENTE, FINALIZADO).
+ */
+
 package com.torneo.api.services;
 
 import com.torneo.api.dto.MatchRequestDTO;
 import com.torneo.api.dto.MatchResponseDTO;
-import com.torneo.api.enums.MatchStatus;
-import com.torneo.api.models.Inscription;
-import com.torneo.api.models.MatchEntity;
+import com.torneo.api.exceptions.NotFoundException;
+import com.torneo.api.models.Match;
 import com.torneo.api.models.TeamEntity;
-import com.torneo.api.repository.InscriptionRepository;
+import com.torneo.api.models.Tournament;
 import com.torneo.api.repository.MatchRepository;
 import com.torneo.api.repository.TeamRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import com.torneo.api.repository.TournamentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Servicio que gestiona la lógica de partidos.
- * Usa DTOs para crear, consultar y actualizar partidos.
- * Además, genera automáticamente partidos tipo "todos contra todos".
- */
 @Service
 @RequiredArgsConstructor
 public class MatchService {
 
     private final MatchRepository matchRepository;
+    private final TournamentRepository tournamentRepository;
     private final TeamRepository teamRepository;
-    private final InscriptionRepository inscriptionRepository;
 
     public MatchResponseDTO createMatch(MatchRequestDTO dto) {
-        MatchEntity match = MatchEntity.builder()
-                .matchDate(dto.getMatchDate())
-                .status(dto.getStatus())
-                .tournamentId(dto.getTournamentId())
-                .firstTeam(getTeamById(dto.getFirstTeamId()))
-                .secondTeam(getTeamById(dto.getSecondTeamId()))
+        Tournament tournament = tournamentRepository.findById(dto.getTournamentId())
+                .orElseThrow(() -> new NotFoundException("Torneo no encontrado"));
+
+        TeamEntity firstTeam = teamRepository.findById(dto.getFirstTeamId())
+                .orElseThrow(() -> new NotFoundException("Primer equipo no encontrado"));
+
+        TeamEntity secondTeam = teamRepository.findById(dto.getSecondTeamId())
+                .orElseThrow(() -> new NotFoundException("Segundo equipo no encontrado"));
+
+        Match match = Match.builder()
+                .tournament(tournament)
+                .firstTeam(firstTeam)
+                .secondTeam(secondTeam)
                 .firstTeamScore(dto.getFirstTeamScore())
                 .secondTeamScore(dto.getSecondTeamScore())
+                .status(dto.getStatus())
                 .build();
 
-        return toDTO(matchRepository.save(match));
+        return mapToDTO(matchRepository.save(match));
     }
 
     public MatchResponseDTO updateMatch(Long id, MatchRequestDTO dto) {
-        MatchEntity match = matchRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Partido con ID " + id + " no encontrado"));
+        Match match = matchRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Partido no encontrado"));
 
-        match.setMatchDate(dto.getMatchDate());
-        match.setStatus(dto.getStatus());
-        match.setTournamentId(dto.getTournamentId());
-        match.setFirstTeam(getTeamById(dto.getFirstTeamId()));
-        match.setSecondTeam(getTeamById(dto.getSecondTeamId()));
+        Tournament tournament = tournamentRepository.findById(dto.getTournamentId())
+                .orElseThrow(() -> new NotFoundException("Torneo no encontrado"));
+
+        TeamEntity firstTeam = teamRepository.findById(dto.getFirstTeamId())
+                .orElseThrow(() -> new NotFoundException("Primer equipo no encontrado"));
+
+        TeamEntity secondTeam = teamRepository.findById(dto.getSecondTeamId())
+                .orElseThrow(() -> new NotFoundException("Segundo equipo no encontrado"));
+
+        match.setTournament(tournament);
+        match.setFirstTeam(firstTeam);
+        match.setSecondTeam(secondTeam);
         match.setFirstTeamScore(dto.getFirstTeamScore());
         match.setSecondTeamScore(dto.getSecondTeamScore());
+        match.setStatus(dto.getStatus());
 
-        return toDTO(matchRepository.save(match));
+        return mapToDTO(matchRepository.save(match));
     }
 
     public void deleteMatch(Long id) {
+        if (!matchRepository.existsById(id)) {
+            throw new NotFoundException("Partido no encontrado");
+        }
         matchRepository.deleteById(id);
     }
 
-    public List<MatchResponseDTO> getMatchesByTournamentId(Long tournamentId) {
+    public List<MatchResponseDTO> getAllMatches() {
+        return matchRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<MatchResponseDTO> getMatchesByTournament(Long tournamentId) {
         return matchRepository.findByTournamentId(tournamentId).stream()
-                .map(this::toDTO)
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     public MatchResponseDTO getMatchById(Long id) {
         return matchRepository.findById(id)
-                .map(this::toDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Partido con ID " + id + " no encontrado"));
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new NotFoundException("Partido no encontrado"));
     }
 
-    /**
-     * Genera todos los partidos posibles del tipo "todos contra todos"
-     * para un torneo determinado.
-     *
-     * @param tournamentId ID del torneo
-     */
-    @Transactional
-    public void generarPartidosRoundRobin(Long tournamentId) {
-        List<Inscription> inscripciones = inscriptionRepository.findAll().stream()
-                .filter(i -> i.getTournament().getId().equals(tournamentId))
-                .toList();
-
-        List<TeamEntity> equipos = inscripciones.stream()
-                .map(Inscription::getTeam)
-                .toList();
-
-        for (int i = 0; i < equipos.size(); i++) {
-            for (int j = i + 1; j < equipos.size(); j++) {
-                MatchEntity match = MatchEntity.builder()
-                        .tournamentId(tournamentId)
-                        .firstTeam(equipos.get(i))
-                        .secondTeam(equipos.get(j))
-                        .matchDate(null)
-                        .firstTeamScore(null)
-                        .secondTeamScore(null)
-                        .status(MatchStatus.ONGOING)
-                        .build();
-
-                matchRepository.save(match);
-            }
-        }
-    }
-
-    // -------------------- Auxiliares --------------------
-
-    private TeamEntity getTeamById(Long id) {
-        return teamRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Equipo con ID " + id + " no encontrado"));
-    }
-
-    private MatchResponseDTO toDTO(MatchEntity match) {
+    private MatchResponseDTO mapToDTO(Match match) {
         return MatchResponseDTO.builder()
                 .id(match.getId())
-                .tournamentId(match.getTournamentId())
-                .firstTeamId(match.getFirstTeam().getId())
-                .secondTeamId(match.getSecondTeam().getId())
-                .matchDate(match.getMatchDate())
+                .tournamentName(match.getTournament().getName())
+                .firstTeamName(match.getFirstTeam().getName())
+                .secondTeamName(match.getSecondTeam().getName())
                 .firstTeamScore(match.getFirstTeamScore())
                 .secondTeamScore(match.getSecondTeamScore())
                 .status(match.getStatus())

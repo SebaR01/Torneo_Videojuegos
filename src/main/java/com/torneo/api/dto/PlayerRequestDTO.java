@@ -1,37 +1,25 @@
 package com.torneo.api.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.Set;
-
 /**
- * Este DTO se usa para crear o actualizar un jugador.
- * Recibe la información básica y los equipos a los que se quiere asignar.
- *
- * ⚠️ Ahora los IDs de los equipos son del tipo Long para mantener consistencia.
+ * DTO para registrar o actualizar un jugador.
+ * Recibe nombre, apodo y el ID del equipo al que pertenece.
  */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class PlayerRequestDTO {
 
-    @NotNull
-    @Size(max = 50)
-    private String nickname;
-
-    @NotNull
+    @NotNull(message = "El nombre del jugador es obligatorio")
     private String name;
 
-    @NotNull
-    private String lastName;
+    @NotNull(message = "El apodo del jugador es obligatorio")
+    private String nickname;
 
-    @Email
-    private String email;
-
-    @Min(13)
-    private Integer age;
-
-    private Set<Long> teamsIds; // CAMBIO A LONG
+    @NotNull(message = "El ID del equipo es obligatorio")
+    private Long teamId;
 }

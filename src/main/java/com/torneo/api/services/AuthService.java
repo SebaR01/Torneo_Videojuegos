@@ -14,22 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * Servicio de autenticación y registro de usuarios.
- *
- * Esta clase encapsula la lógica necesaria para:
- * - Registrar nuevos usuarios con sus credenciales encriptadas.
- * - Verificar credenciales al momento de hacer login.
- * - Generar tokens JWT válidos para usuarios autenticados.
- *
- * Utiliza `AuthenticationManager` para validar credenciales,
- * `PasswordEncoder` para encriptar contraseñas, y `JwtService`
- * para generar y validar tokens seguros.
- *
- * Su propósito es abstraer la lógica de autenticación del resto
- * de la aplicación, brindando un punto central y reutilizable
- * para la gestión de sesiones.
+ * Servicio que gestiona el registro y login de usuarios.
+ * En el registro encripta la contraseña y genera el token.
+ * En el login verifica las credenciales y devuelve un JWT.
  */
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -40,10 +28,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsServiceImpl userDetailsService;
 
-    /**
-     * Registra un nuevo usuario y devuelve su token JWT.
-     */
-    public String register(RegisterRequest request) {
+    public LoginResponse register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new IllegalArgumentException("El usuario ya existe");
         }
@@ -57,24 +42,18 @@ public class AuthService {
 
         userRepository.save(user);
 
-        // Generamos el token usando UserDetails
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-        return jwtService.generateToken(userDetails);
+        String token = jwtService.generateToken(userDetails);
+        return new LoginResponse(token);
     }
 
-    /**
-     * Autentica un usuario y devuelve un token JWT si las credenciales son válidas.
-     */
     public LoginResponse login(LoginRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(), request.getPassword()
-                )
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         String token = jwtService.generateToken(userDetails);
-
         return new LoginResponse(token);
     }
 }

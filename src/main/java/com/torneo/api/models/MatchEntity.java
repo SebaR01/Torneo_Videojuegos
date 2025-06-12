@@ -1,18 +1,13 @@
 package com.torneo.api.models;
 
-import com.torneo.api.enums.MatchStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
- * ✅ Representa un partido dentro de un torneo.
- *
- * 🔹 Participan dos equipos (local y visitante).
- * 🔹 Guarda fecha, estado y resultado del partido.
- * 🔹 Se relaciona con un torneo por ID (tipo Long).
+ * Entidad que representa un partido entre dos equipos dentro de un torneo.
+ * Incluye los equipos involucrados, el resultado, la fecha y el estado del partido.
  */
 @Entity
 @Table(name = "matches")
@@ -26,36 +21,24 @@ public class MatchEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "La fecha del partido no puede ser nula.")
-    private LocalDateTime matchDate;
-
-    @NotNull(message = "El estado del partido no puede ser nulo.")
-    @Enumerated(EnumType.STRING)
-    private MatchStatus status;
-
-    // ✅ ID del torneo asociado (coherente con el tipo Long en Tournament)
-    @NotNull
-    @Column(name = "torneo_id", nullable = false)
+    @Column(name = "tournament_id", nullable = false)
     private Long tournamentId;
 
-    // ✅ Primer equipo (local)
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "first_team_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "first_team_id", referencedColumnName = "id")
     private TeamEntity firstTeam;
 
-    // ✅ Segundo equipo (visitante)
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "second_team_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "second_team_id", referencedColumnName = "id")
     private TeamEntity secondTeam;
 
-    // ✅ Resultados (pueden ser nulos si no se jugó)
-    @Min(0)
-    @Column(name = "first_team_score")
+    @Column(name = "match_date", nullable = false)
+    private LocalDate matchDate;
+
     private Integer firstTeamScore;
 
-    @Min(0)
-    @Column(name = "second_team_score")
     private Integer secondTeamScore;
+
+    @Column(nullable = false)
+    private String status; // Ej: "PENDIENTE", "JUGADO", "CANCELADO"
 }

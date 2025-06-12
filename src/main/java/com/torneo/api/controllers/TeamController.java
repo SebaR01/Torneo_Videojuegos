@@ -1,50 +1,55 @@
+/**
+ * Controlador REST para gestionar equipos en el sistema de torneos.
+ *
+ * ✔ Permite crear, consultar, editar y eliminar equipos.
+ * ✔ Filtra equipos por torneo.
+ * ✔ Requiere autenticación y control de roles (ADMIN u ORGANIZER para cambios).
+ * ✔ Todas las rutas utilizan IDs de tipo Long para evitar conflictos.
+ */
+
 package com.torneo.api.controllers;
 
 import com.torneo.api.dto.TeamRequestDTO;
 import com.torneo.api.dto.TeamResponseDTO;
 import com.torneo.api.services.TeamService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controlador que maneja las operaciones sobre equipos.
- * Protege los endpoints y delega la lógica al servicio correspondiente.
- */
 @RestController
-@RequestMapping("/api/equipos")
+@RequestMapping("/api/teams")
 @RequiredArgsConstructor
 public class TeamController {
 
-    @Autowired
     private final TeamService teamService;
 
-    /**
-     * Crea un nuevo equipo. Solo ADMIN o ORGANIZADOR pueden hacerlo.
-     */
-    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZADOR')")
-    @PostMapping
-    public ResponseEntity<TeamResponseDTO> createTeam(@RequestBody TeamRequestDTO teamDTO) {
-        return ResponseEntity.status(201).body(teamService.createTeam(teamDTO));
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping
+    public ResponseEntity<List<TeamResponseDTO>> getAllTeams() {
+        return ResponseEntity.ok(teamService.listTeams());
     }
 
-    /**
-     * Actualiza un equipo existente.
-     */
-    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZADOR')")
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{id}")
+    public ResponseEntity<TeamResponseDTO> getTeamById(@PathVariable Long id) {
+        return ResponseEntity.ok(teamService.findTeamById(id));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
+    @PostMapping
+    public ResponseEntity<TeamResponseDTO> createTeam(@RequestBody TeamRequestDTO teamDTO) {
+        return ResponseEntity.ok(teamService.createTeam(teamDTO));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     @PutMapping("/{id}")
-    public ResponseEntity<TeamResponseDTO> updateTeam(@PathVariable Long id,
-                                                      @RequestBody TeamRequestDTO teamDTO) {
+    public ResponseEntity<TeamResponseDTO> updateTeam(@PathVariable Long id, @RequestBody TeamRequestDTO teamDTO) {
         return ResponseEntity.ok(teamService.updateTeam(id, teamDTO));
     }
 
-    /**
-     * Elimina un equipo por ID.
-     */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTeam(@PathVariable Long id) {
@@ -52,30 +57,9 @@ public class TeamController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * Devuelve un equipo por su ID.
-     */
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}")
-    public ResponseEntity<TeamResponseDTO> findTeamById(@PathVariable Long id) {
-        return ResponseEntity.ok(teamService.findTeamById(id));
-    }
-
-    /**
-     * Devuelve todos los equipos registrados.
-     */
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping
-    public ResponseEntity<List<TeamResponseDTO>> listTeams() {
-        return ResponseEntity.ok(teamService.listTeams());
-    }
-
-    /**
-     * Filtra los equipos por ID del torneo.
-     */
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/torneo/{tournamentId}")
-    public ResponseEntity<List<TeamResponseDTO>> filterTeamsByTournamentId(@PathVariable Long tournamentId) {
+    @GetMapping("/tournament/{tournamentId}")
+    public ResponseEntity<List<TeamResponseDTO>> getTeamsByTournament(@PathVariable Long tournamentId) {
         return ResponseEntity.ok(teamService.filterTeamsByTournamentId(tournamentId));
     }
 }

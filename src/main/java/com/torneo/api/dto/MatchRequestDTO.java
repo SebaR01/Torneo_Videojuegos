@@ -1,40 +1,29 @@
 package com.torneo.api.dto;
 
-import com.torneo.api.enums.MatchStatus;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
-/**
- * DTO para crear o actualizar un partido.
- * Utiliza IDs en lugar de entidades para simplificar el intercambio de datos.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class MatchRequestDTO {
 
-    @NotNull
+    @NotNull(message = "El ID del torneo es obligatorio")
     private Long tournamentId;
 
-    @NotNull
-    private LocalDateTime matchDate;
-
-    @NotNull
+    @NotNull(message = "El ID del primer equipo es obligatorio")
     private Long firstTeamId;
 
-    @NotNull
+    @NotNull(message = "El ID del segundo equipo es obligatorio")
     private Long secondTeamId;
 
-    @Min(0)
+    @NotNull(message = "El puntaje del primer equipo es obligatorio")
     private Integer firstTeamScore;
 
-    @Min(0)
+    @NotNull(message = "El puntaje del segundo equipo es obligatorio")
     private Integer secondTeamScore;
 
-    @NotNull
-    private MatchStatus status;
+    @NotNull(message = "El estado del partido es obligatorio")
+    private String status;
 }

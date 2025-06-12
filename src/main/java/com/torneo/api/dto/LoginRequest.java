@@ -1,14 +1,19 @@
 package com.torneo.api.dto;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * Este DTO se usa cuando un usuario quiere iniciar sesión.
- * Contiene el nombre de usuario y la contraseña que ingresa.
+ * DTO que representa las credenciales enviadas por el usuario al hacer login.
  */
-
-@Data
+@Getter
+@Setter
 public class LoginRequest {
+
+    @NotBlank
     private String username;
+
+    @NotBlank
     private String password;
 }

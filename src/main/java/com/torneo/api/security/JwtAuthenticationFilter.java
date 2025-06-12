@@ -15,9 +15,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * Este filtro se ejecuta en cada solicitud HTTP.
- * Revisa si hay un token JWT válido en la cabecera y, si lo hay,
- * autentica al usuario y lo carga en el contexto de seguridad.
+ * Filtro personalizado que se ejecuta en cada solicitud.
+ * Si detecta un token JWT en la cabecera Authorization, lo valida
+ * y establece la autenticación en el contexto de Spring Security.
  */
 @Component
 @RequiredArgsConstructor
@@ -36,17 +36,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            System.out.println("🛡️ Token recibido: " + token);
-
             String username = jwtService.extractUsername(token);
-            System.out.println("👤 Usuario extraído del token: " + username);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 var userDetails = userDetailsService.loadUserByUsername(username);
-                boolean isValid = jwtService.isTokenValid(token, userDetails);
-                System.out.println("✅ ¿Token válido?: " + isValid);
 
-                if (isValid) {
+                if (jwtService.isTokenValid(token, userDetails)) {
                     var authToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities()
                     );
@@ -54,8 +49,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        } else {
-            System.out.println("❌ No se encontró el header Authorization con formato Bearer.");
         }
 
         filterChain.doFilter(request, response);

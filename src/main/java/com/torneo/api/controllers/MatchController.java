@@ -1,57 +1,58 @@
+/**
+ * Controlador REST para gestionar partidos (matches) entre equipos.
+ *
+ * ✔ Permite crear, editar, eliminar y consultar partidos.
+ * ✔ Filtra partidos por torneo.
+ * ✔ Utiliza DTOs para evitar exponer entidades directamente.
+ * ✔ Protegido con roles si se desea agregar seguridad más adelante.
+ */
+
 package com.torneo.api.controllers;
 
 import com.torneo.api.dto.MatchRequestDTO;
 import com.torneo.api.dto.MatchResponseDTO;
 import com.torneo.api.services.MatchService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controlador que maneja las operaciones sobre partidos.
- * Usa DTOs y protege endpoints según el rol del usuario.
- */
 @RestController
 @RequestMapping("/api/matches")
 @RequiredArgsConstructor
 public class MatchController {
 
-    @Autowired
     private final MatchService matchService;
 
-    /**
-     * Crea un nuevo partido. Solo ORGANIZADOR o ADMIN pueden hacerlo.
-     */
-    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZADOR')")
-    @PostMapping
-    public ResponseEntity<MatchResponseDTO> createMatch(@RequestBody MatchRequestDTO matchRequestDTO) {
-        MatchResponseDTO createdMatch = matchService.createMatch(matchRequestDTO);
-        return ResponseEntity.status(201).body(createdMatch);
+    @GetMapping
+    public ResponseEntity<List<MatchResponseDTO>> getAllMatches() {
+        return ResponseEntity.ok(matchService.getAllMatches());
     }
 
-    /**
-     * Lista todos los partidos de un torneo específico.
-     * Requiere estar autenticado.
-     */
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/torneo/{tournamentId}")
-    public ResponseEntity<List<MatchResponseDTO>> getMatchesByTournamentId(@PathVariable Long tournamentId) {
-        List<MatchResponseDTO> matches = matchService.getMatchesByTournamentId(tournamentId);
-        return ResponseEntity.ok(matches);
-    }
-
-    /**
-     * Busca un partido por ID.
-     * Requiere estar autenticado.
-     */
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<MatchResponseDTO> getMatchById(@PathVariable Long id) {
-        MatchResponseDTO match = matchService.getMatchById(id);
-        return ResponseEntity.ok(match);
+        return ResponseEntity.ok(matchService.getMatchById(id));
+    }
+
+    @GetMapping("/tournament/{tournamentId}")
+    public ResponseEntity<List<MatchResponseDTO>> getByTournament(@PathVariable Long tournamentId) {
+        return ResponseEntity.ok(matchService.getMatchesByTournament(tournamentId));
+    }
+
+    @PostMapping
+    public ResponseEntity<MatchResponseDTO> createMatch(@RequestBody MatchRequestDTO dto) {
+        return ResponseEntity.ok(matchService.createMatch(dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MatchResponseDTO> updateMatch(@PathVariable Long id, @RequestBody MatchRequestDTO dto) {
+        return ResponseEntity.ok(matchService.updateMatch(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMatch(@PathVariable Long id) {
+        matchService.deleteMatch(id);
+        return ResponseEntity.noContent().build();
     }
 }
