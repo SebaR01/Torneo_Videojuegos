@@ -14,15 +14,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class InscriptionRequestDTO {
-
+public class InscriptionRequestDTO
+{
     @NotNull(message = "El ID del equipo es obligatorio")
     private Long teamId;
 
     @NotNull(message = "El ID del torneo es obligatorio")
     private Long tournamentId;
-
-    @NotNull(message = "El costo es obligatorio")
-    private Double cost;
 }
 
