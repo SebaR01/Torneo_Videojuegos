@@ -12,6 +12,4 @@ public interface PlayerRepository extends JpaRepository<PlayerEntity, Long> {
     // Jugadores de un equipo específico
     List<PlayerEntity> findByTeamId(Long teamId);
 
-    // Jugadores cuyos equipos están en un torneo específico
-    List<PlayerEntity> findByTeam_Tournament_Id(Long tournamentId);
 }

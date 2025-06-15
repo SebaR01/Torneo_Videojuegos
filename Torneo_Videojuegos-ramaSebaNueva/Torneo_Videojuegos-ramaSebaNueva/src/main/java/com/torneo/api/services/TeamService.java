@@ -28,7 +28,6 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
-    private final TournamentRepository tournamentRepository;
     private final TeamXPlayerService teamXPlayerService;
 
     public TeamResponseDTO createTeam(TeamRequestDTO dto) {
@@ -54,22 +53,6 @@ public class TeamService {
         return  teamResponseDTO;
     }
 
-//    public TeamResponseDTO updateTeam(Long id, TeamRequestDTO dto) {
-//        TeamEntity team = teamRepository.findById(id)
-//                .orElseThrow(() -> new NotFoundException("Equipo no encontrado"));
-//
-//        Tournament tournament = tournamentRepository.findById(dto.getTournamentId())
-//                .orElseThrow(() -> new NotFoundException("Torneo no encontrado"));
-//
-//        List<PlayerEntity> players = playerRepository.findAllById(dto.getPlayerIds());
-//
-//        team.setName(dto.getName());
-//        team.setTournament(tournament);
-//        team.setPlayers(new ArrayList<>(players));
-//
-//        return mapToDTO(teamRepository.save(team));
-//    }
-
     public void deleteTeam(Long id) {
         if (!teamRepository.existsById(id)) {
             throw new NotFoundException("Equipo no encontrado");
@@ -89,11 +72,6 @@ public class TeamService {
                 .orElseThrow(() -> new NotFoundException("Equipo no encontrado"));
     }
 
-    public List<TeamResponseDTO> filterTeamsByTournamentId(Long tournamentId) {
-        return teamRepository.findByTournament_Id(tournamentId).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-    }
 
     private TeamResponseDTO mapToDTO(TeamEntity team) {
         return TeamResponseDTO.builder()

@@ -49,11 +49,6 @@ public class TeamController {
         return re;
     }
 
-//    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
-//    @PutMapping("/{id}")
-//    public ResponseEntity<TeamResponseDTO> updateTeam(@PathVariable Long id, @RequestBody TeamRequestDTO teamDTO) {
-//        return ResponseEntity.ok(teamService.updateTeam(id, teamDTO));
-//    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
@@ -62,9 +57,4 @@ public class TeamController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/tournament/{tournamentId}")
-    public ResponseEntity<List<TeamResponseDTO>> getTeamsByTournament(@PathVariable Long tournamentId) {
-        return ResponseEntity.ok(teamService.filterTeamsByTournamentId(tournamentId));
-    }
 }

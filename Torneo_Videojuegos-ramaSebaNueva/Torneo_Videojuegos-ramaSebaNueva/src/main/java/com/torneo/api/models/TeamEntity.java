@@ -29,5 +29,5 @@ public class TeamEntity {
 
     @Column(nullable = false, unique = true, length = 100)
     private String name;
-    
+
 }

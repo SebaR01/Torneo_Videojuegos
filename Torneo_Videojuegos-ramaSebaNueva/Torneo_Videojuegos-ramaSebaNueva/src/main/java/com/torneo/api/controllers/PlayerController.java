@@ -61,9 +61,4 @@ public class PlayerController {
         return ResponseEntity.ok(playerService.listPlayersByTeam(teamId));
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @GetMapping("/tournament/{tournamentId}")
-    public ResponseEntity<List<PlayerResponseDTO>> getByTournament(@PathVariable Long tournamentId) {
-        return ResponseEntity.ok(playerService.listPlayersByTournament(tournamentId));
-    }
 }

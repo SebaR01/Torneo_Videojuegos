@@ -80,12 +80,6 @@ public class PlayerService {
                 .collect(Collectors.toList());
     }
 
-    public List<PlayerResponseDTO> listPlayersByTournament(Long tournamentId) {
-        return playerRepository.findByTeam_Tournament_Id(tournamentId).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-    }
-
     private PlayerResponseDTO mapToDTO(PlayerEntity player) {
         return PlayerResponseDTO.builder()
                 .id(player.getId())
