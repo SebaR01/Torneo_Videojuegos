@@ -41,8 +41,6 @@ public class InscriptionService {
                 .orElseThrow(() -> new NotFoundException("Torneo no encontrado"));
 
         Inscription inscription = Inscription.builder()
-                .date(LocalDate.now())
-                .cost(dto.getCost())
                 .team(team)
                 .tournament(tournament)
                 .build();
@@ -89,8 +87,6 @@ public class InscriptionService {
                 .id(inscription.getId())
                 .teamName(inscription.getTeam().getName())
                 .tournamentName(inscription.getTournament().getName())
-                .date(inscription.getDate())
-                .cost(inscription.getCost())
                 .build();
     }
 }
