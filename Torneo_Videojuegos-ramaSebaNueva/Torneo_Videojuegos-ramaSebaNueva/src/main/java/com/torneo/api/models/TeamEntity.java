@@ -29,21 +29,5 @@ public class TeamEntity {
 
     @Column(nullable = false, unique = true, length = 100)
     private String name;
-
-    // Relación con torneo (opcional)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tournament_id")
-    private Tournament tournament;
-
-    // Jugadores del equipo
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlayerEntity> players;
-
-    // Inscripciones a torneos
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Inscription> inscriptions;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-
+    
 }

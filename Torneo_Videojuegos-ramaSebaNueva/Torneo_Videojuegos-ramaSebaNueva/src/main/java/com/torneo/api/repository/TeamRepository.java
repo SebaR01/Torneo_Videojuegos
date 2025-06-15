@@ -11,4 +11,6 @@ public interface TeamRepository extends JpaRepository<TeamEntity, Long> {
 
     // Buscar todos los equipos asociados a un torneo por ID
     List<TeamEntity> findByTournament_Id(Long tournamentId);
+    //Buscar por id
+
 }

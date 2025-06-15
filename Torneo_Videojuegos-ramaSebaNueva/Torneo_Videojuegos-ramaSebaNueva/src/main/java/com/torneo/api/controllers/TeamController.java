@@ -11,7 +11,9 @@ package com.torneo.api.controllers;
 
 import com.torneo.api.dto.TeamRequestDTO;
 import com.torneo.api.dto.TeamResponseDTO;
+import com.torneo.api.repository.TeamXPlayerRepository;
 import com.torneo.api.services.TeamService;
+import com.torneo.api.services.TeamXPlayerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +27,7 @@ import java.util.List;
 public class TeamController {
 
     private final TeamService teamService;
+    private final TeamXPlayerService teamXPlayerService;
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping
@@ -38,17 +41,19 @@ public class TeamController {
         return ResponseEntity.ok(teamService.findTeamById(id));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
+   // @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER', 'PLAYER'")
     @PostMapping
-    public ResponseEntity<TeamResponseDTO> createTeam(@RequestBody TeamRequestDTO teamDTO) {
-        return ResponseEntity.ok(teamService.createTeam(teamDTO));
+    public ResponseEntity<TeamResponseDTO> createTeam(@RequestBody TeamRequestDTO teamDTO)
+    {
+        ResponseEntity<TeamResponseDTO> re = ResponseEntity.ok(teamService.createTeam(teamDTO));
+        return re;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
-    @PutMapping("/{id}")
-    public ResponseEntity<TeamResponseDTO> updateTeam(@PathVariable Long id, @RequestBody TeamRequestDTO teamDTO) {
-        return ResponseEntity.ok(teamService.updateTeam(id, teamDTO));
-    }
+//    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
+//    @PutMapping("/{id}")
+//    public ResponseEntity<TeamResponseDTO> updateTeam(@PathVariable Long id, @RequestBody TeamRequestDTO teamDTO) {
+//        return ResponseEntity.ok(teamService.updateTeam(id, teamDTO));
+//    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
