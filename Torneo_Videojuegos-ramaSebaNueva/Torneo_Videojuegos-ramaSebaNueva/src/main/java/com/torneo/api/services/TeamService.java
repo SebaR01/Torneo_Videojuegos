@@ -16,6 +16,7 @@ import com.torneo.api.exceptions.NotFoundException;
 import com.torneo.api.models.*;
 import com.torneo.api.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TeamService {
 
-    private final TeamRepository teamRepository;
+    @Autowired
+    private TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final TeamXPlayerService teamXPlayerService;
 
@@ -39,6 +41,7 @@ public class TeamService {
         TeamResponseDTO teamResponseDTO = mapToDTO(teamRepository.save(team));
 
         List<User> players = userRepository.findAllById(dto.getPlayerIds()); //Tengo una listra de los usuarios que van a pertenecer al equipo
+        players.forEach(p -> System.out.println(p));
         if(players.isEmpty()){ //Corroboro que la lista no esté vacía.
             System.err.println("Ninguno de los id proporcionados es válido");
         }else{
