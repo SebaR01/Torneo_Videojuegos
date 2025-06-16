@@ -12,4 +12,6 @@ public interface InscriptionRepository extends JpaRepository<Inscription, Long> 
     List<Inscription> findByTournamentId(Long tournamentId);
 
     List<Inscription> findByTeamId(Long teamId);
+
+    long countByTournamentId(Long tournamentId);
 }

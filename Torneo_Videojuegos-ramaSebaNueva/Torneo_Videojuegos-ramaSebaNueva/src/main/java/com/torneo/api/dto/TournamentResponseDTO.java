@@ -24,4 +24,5 @@ public class TournamentResponseDTO {
     private String organizerUsername;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Long maxTeams;
 }

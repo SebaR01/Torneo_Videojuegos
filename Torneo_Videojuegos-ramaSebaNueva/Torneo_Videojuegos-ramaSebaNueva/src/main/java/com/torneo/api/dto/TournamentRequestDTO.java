@@ -30,9 +30,6 @@ public class TournamentRequestDTO {
     @NotNull(message = "La categoría del juego es obligatoria")
     private GamesCategory category;
 
-    @NotNull(message = "El estado del torneo es obligatorio")
-    private GamesState state;
-
     @NotNull(message = "El ID del organizador es obligatorio")
     private Long organizerId;
 
@@ -42,4 +39,7 @@ public class TournamentRequestDTO {
     @NotNull(message = "La fecha de fin es obligatoria")
     @Future(message = "La fecha de fin debe ser futura")
     private LocalDate endDate;
+
+    @NotNull(message = "La cupo maximo del torneo es obligatorio")
+    private Long maxTeams;
 }

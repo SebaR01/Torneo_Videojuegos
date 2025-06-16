@@ -2,14 +2,16 @@ package com.torneo.api.services;
 
 import com.torneo.api.dto.InscriptionRequestDTO;
 import com.torneo.api.dto.InscriptionResponseDTO;
+import com.torneo.api.enums.GamesState;
 import com.torneo.api.exceptions.NotFoundException;
 import com.torneo.api.models.Inscription;
 import com.torneo.api.models.TeamEntity;
 import com.torneo.api.models.Tournament;
-import com.torneo.api.repository.InscriptionRepository;
-import com.torneo.api.repository.TeamRepository;
-import com.torneo.api.repository.TournamentRepository;
+import com.torneo.api.models.User;
+import com.torneo.api.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -32,6 +34,9 @@ public class InscriptionService {
     private final TeamRepository teamRepository;
     private final TournamentRepository tournamentRepository;
     private final EmailService emailService;
+    private final UserRepository userRepository;
+    private final TeamXPlayerRepository teamXPlayerRepository;
+
 
     public InscriptionResponseDTO registerInscription(InscriptionRequestDTO dto) {
         TeamEntity team = teamRepository.findById(dto.getTeamId())
@@ -40,6 +45,24 @@ public class InscriptionService {
         Tournament tournament = tournamentRepository.findById(dto.getTournamentId())
                 .orElseThrow(() -> new NotFoundException("Torneo no encontrado"));
 
+        //Valida que el usuario autenticado pertenece al equipo
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Usuario autenticado no encontrado"));
+
+        boolean pertenece = teamXPlayerRepository.existsByTeamEntityIdAndUserId(team.getId(), user.getId());
+        if (!pertenece) {
+            throw new IllegalArgumentException("No podés inscribir a un equipo al que no pertenecés.");
+        }
+
+        //Validar que el cupo no este lleno
+        long inscripcionesActuales = inscriptionRepository.countByTournamentId(tournament.getId());
+        if (inscripcionesActuales >= tournament.getMaxTeams()) {
+            throw new IllegalArgumentException("El torneo ya alcanzó el cupo máximo de equipos.");
+        }
+
+        //Crear y validar inscripcion
         Inscription inscription = Inscription.builder()
                 .date(LocalDate.now())
                 .cost(dto.getCost())
@@ -48,6 +71,12 @@ public class InscriptionService {
                 .build();
 
         inscriptionRepository.save(inscription);
+
+        //Si se completo el cupo cambia el estado de torneo de Next a Active
+        if (inscripcionesActuales + 1 == tournament.getMaxTeams()) {
+            tournament.setState(GamesState.ACTIVE);
+            tournamentRepository.save(tournament);
+        }
 
         // Enviar email al responsable del equipo (podés adaptar destinatario)
         emailService.sendEmail(

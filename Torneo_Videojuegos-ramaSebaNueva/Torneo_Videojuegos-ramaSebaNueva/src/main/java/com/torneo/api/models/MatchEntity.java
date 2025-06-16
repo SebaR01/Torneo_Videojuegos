@@ -40,5 +40,5 @@ public class MatchEntity {
     private Integer secondTeamScore;
 
     @Column(nullable = false)
-    private String status; // Ej: "PENDIENTE", "JUGADO", "CANCELADO"
+    private String status;
 }
