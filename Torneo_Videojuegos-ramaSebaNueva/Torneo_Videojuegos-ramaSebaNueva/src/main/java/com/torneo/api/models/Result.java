@@ -41,4 +41,9 @@ public class Result {
 
     @Column(nullable = false)
     private Integer scoreLoserTeam;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "match_id", nullable = false)
+    private  Match match;
+
 }

@@ -20,9 +20,9 @@ public class InscriptionResponseDTO {
 
     private Long id;
 
-    private String teamName;
+    private int teamID;
 
-    private String tournamentName;
+    private int tournamentID;
 
     private LocalDate date;
 

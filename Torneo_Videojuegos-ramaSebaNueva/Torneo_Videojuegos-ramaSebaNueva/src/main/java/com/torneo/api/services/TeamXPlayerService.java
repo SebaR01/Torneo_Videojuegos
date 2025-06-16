@@ -12,10 +12,13 @@ import com.torneo.api.models.User;
 import com.torneo.api.repository.TeamRepository;
 import com.torneo.api.repository.TeamXPlayerRepository;
 import com.torneo.api.repository.UserRepository;
+import jdk.dynalink.linker.LinkerServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +40,11 @@ public class TeamXPlayerService
                 .teamEntity(team)
                 .user(user).build();
         return mapToResponseDTO(teamXPlayerRepository.save(teamXPlayer));
+    }
+
+    public List<TeamXPlayer> getByTeamId(Long teamID)
+    {
+        return teamXPlayerRepository.findByTeam_Id(teamID);
     }
 
     private TeamXPlayerResponseDTO mapToResponseDTO(TeamXPlayer txp)

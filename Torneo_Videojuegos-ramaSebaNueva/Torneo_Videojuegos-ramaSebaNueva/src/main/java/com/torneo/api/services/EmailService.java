@@ -56,4 +56,24 @@ public class EmailService {
 
         mailSender.send(mensaje);
     }
+
+    public void campeonEmail(String para) throws MessagingException
+    {
+        MimeMessage mensaje = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, "UTF-8");
+
+        // Prepara el contexto para Thymeleaf
+        Context context = new Context();
+
+        // Procesa la plantilla
+        String contenidoHtml = templateEngine.process("email/campeon.html", context);
+
+        helper.setTo(para);
+        helper.setSubject("CAMPEON");
+        helper.setText(contenidoHtml, true); // true = HTML
+
+        helper.setFrom("tu-correo@gmail.com");
+
+        mailSender.send(mensaje);
+    }
 }

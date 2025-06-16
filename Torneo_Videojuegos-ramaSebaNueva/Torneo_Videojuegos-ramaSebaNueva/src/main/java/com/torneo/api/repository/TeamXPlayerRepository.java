@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface TeamXPlayerRepository extends JpaRepository<TeamXPlayer, Long>
 {
+    List<TeamXPlayer> findByTeam_Id(Long teamID);
 }

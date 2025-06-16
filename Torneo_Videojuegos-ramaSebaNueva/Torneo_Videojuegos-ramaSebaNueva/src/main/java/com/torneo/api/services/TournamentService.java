@@ -85,6 +85,11 @@ public class TournamentService {
         return mapToResponseDTO(tournamentRepository.save(tournament));
     }
 
+    public void update(Tournament tournament)
+    {
+        tournamentRepository.save(tournament);
+    }
+
     public void deleteTournament(Long id) {
         if (!tournamentRepository.existsById(id)) {
             throw new NotFoundException("Torneo no encontrado");

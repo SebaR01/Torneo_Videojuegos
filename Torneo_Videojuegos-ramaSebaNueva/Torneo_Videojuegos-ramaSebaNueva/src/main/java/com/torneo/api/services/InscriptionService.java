@@ -9,6 +9,7 @@ import com.torneo.api.models.Tournament;
 import com.torneo.api.repository.InscriptionRepository;
 import com.torneo.api.repository.TeamRepository;
 import com.torneo.api.repository.TournamentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -73,6 +74,11 @@ public class InscriptionService {
         return inscriptionRepository.findByTeamId(teamId).stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public Inscription getInscriptionByTeamAndTournament(Long teamId, Long tournamentId) {
+        return inscriptionRepository.findByTeam_IdAndTournament_Id(teamId, tournamentId)
+                .orElseThrow(() -> new EntityNotFoundException("Inscripción no encontrada para el equipo ID " + teamId + " y torneo ID " + tournamentId));
     }
 
     public void delete(Long id) {
