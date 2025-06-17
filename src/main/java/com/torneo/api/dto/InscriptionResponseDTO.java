@@ -1,16 +1,13 @@
-/**
- * DTO de salida para mostrar una inscripción ya registrada.
- *
- * ✔ Incluye el nombre del equipo y del torneo.
- * ✔ Muestra la fecha de inscripción y el costo.
- * ✔ Se utiliza para retornar los datos al frontend.
- */
-
 package com.torneo.api.dto;
 
 import lombok.*;
 
-import java.time.LocalDate;
+/**
+ * DTO de salida para mostrar una inscripción ya registrada.
+ *
+ * ✔ Incluye el ID y nombre del equipo y torneo.
+ * ✔ Se utiliza para retornar los datos al frontend y para lógica interna.
+ */
 
 @Data
 @NoArgsConstructor
@@ -19,12 +16,7 @@ import java.time.LocalDate;
 public class InscriptionResponseDTO {
 
     private Long id;
-
+    private int teamID;
     private String teamName;
-
     private String tournamentName;
-
-    private LocalDate date;
-
-    private Double cost;
 }

@@ -24,5 +24,7 @@ public class TeamRequestDTO {
     @NotNull(message = "La lista de jugadores es obligatoria")
     private List<Long> playerIds;
 
-    private Long tournamentId;
+    @NotNull(message = "El cupo máximo es obligatorio")
+    private Integer maxTeams;
+
 }

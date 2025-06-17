@@ -15,5 +15,6 @@ import lombok.*;
 public class TeamResponseDTO {
     private Long id;
     private String name;
-    private String tournamentName;
+    private Integer maxTeams;
+
 }

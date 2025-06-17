@@ -7,8 +7,8 @@ import lombok.*;
 import java.time.LocalDate;
 
 /**
- * DTO de salida para mostrar información de un torneo al cliente.
- * Evita exponer entidades completas como `User`, y en su lugar muestra solo el nombre del organizador.
+ * DTO de salida para mostrar información de un torneo.
+ * ✔ Se agregó el campo `maxTeams` para mostrar el cupo al frontend.
  */
 @Data
 @Builder
@@ -24,4 +24,5 @@ public class TournamentResponseDTO {
     private String organizerUsername;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Integer maxTeams;
 }

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 /**
  * DTO de entrada para registrar o actualizar un torneo.
- * Contiene los campos que el frontend debe enviar.
+ * ✔ Se agregó el campo `maxTeams` para definir el cupo.
  */
 @Data
 @NoArgsConstructor
@@ -42,4 +42,7 @@ public class TournamentRequestDTO {
     @NotNull(message = "La fecha de fin es obligatoria")
     @Future(message = "La fecha de fin debe ser futura")
     private LocalDate endDate;
+
+    @NotNull(message = "El cupo máximo de equipos es obligatorio")
+    private Integer maxTeams;
 }

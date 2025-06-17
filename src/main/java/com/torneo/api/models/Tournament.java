@@ -47,4 +47,8 @@ public class Tournament {
 
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
+
+    @Column(name = "max_teams", nullable = false)
+    private Integer maxTeams;
+
 }

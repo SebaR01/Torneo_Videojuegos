@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 
 /**
  * Servicio que gestiona la lógica de negocio relacionada a torneos.
- * Realiza validaciones, mapeos DTO ↔ entidad y acceso a la base de datos.
+ * ✔ Se agregó validación de cupo permitido (2, 4, 8 o 16).
+ * ✔ Se reflejó el campo maxTeams en los DTOs.
  */
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,8 @@ public class TournamentService {
     private final UserRepository userRepository;
 
     public TournamentResponseDTO createTournament(TournamentRequestDTO dto) {
+        validarCupo(dto.getMaxTeams());
+
         User organizer = userRepository.findById(dto.getOrganizerId())
                 .orElseThrow(() -> new NotFoundException("Organizador no encontrado"));
 
@@ -38,7 +41,29 @@ public class TournamentService {
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
                 .organizer(organizer)
+                .maxTeams(dto.getMaxTeams())
                 .build();
+
+        return mapToResponseDTO(tournamentRepository.save(tournament));
+    }
+
+    public TournamentResponseDTO updateTournament(Long id, TournamentRequestDTO dto) {
+        validarCupo(dto.getMaxTeams());
+
+        Tournament tournament = tournamentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Torneo no encontrado"));
+
+        User organizer = userRepository.findById(dto.getOrganizerId())
+                .orElseThrow(() -> new NotFoundException("Organizador no encontrado"));
+
+        tournament.setName(dto.getName());
+        tournament.setGame(dto.getGame());
+        tournament.setCategory(dto.getCategory());
+        tournament.setState(dto.getState());
+        tournament.setStartDate(dto.getStartDate());
+        tournament.setEndDate(dto.getEndDate());
+        tournament.setOrganizer(organizer);
+        tournament.setMaxTeams(dto.getMaxTeams());
 
         return mapToResponseDTO(tournamentRepository.save(tournament));
     }
@@ -67,29 +92,15 @@ public class TournamentService {
                 .collect(Collectors.toList());
     }
 
-    public TournamentResponseDTO updateTournament(Long id, TournamentRequestDTO dto) {
-        Tournament tournament = tournamentRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Torneo no encontrado"));
-
-        User organizer = userRepository.findById(dto.getOrganizerId())
-                .orElseThrow(() -> new NotFoundException("Organizador no encontrado"));
-
-        tournament.setName(dto.getName());
-        tournament.setGame(dto.getGame());
-        tournament.setCategory(dto.getCategory());
-        tournament.setState(dto.getState());
-        tournament.setStartDate(dto.getStartDate());
-        tournament.setEndDate(dto.getEndDate());
-        tournament.setOrganizer(organizer);
-
-        return mapToResponseDTO(tournamentRepository.save(tournament));
-    }
-
     public void deleteTournament(Long id) {
         if (!tournamentRepository.existsById(id)) {
             throw new NotFoundException("Torneo no encontrado");
         }
         tournamentRepository.deleteById(id);
+    }
+
+    public void update(Tournament tournament) {
+        tournamentRepository.save(tournament);
     }
 
     private TournamentResponseDTO mapToResponseDTO(Tournament t) {
@@ -102,6 +113,14 @@ public class TournamentService {
                 .organizerUsername(t.getOrganizer().getUsername())
                 .startDate(t.getStartDate())
                 .endDate(t.getEndDate())
+                .maxTeams(t.getMaxTeams())
                 .build();
+    }
+
+    private void validarCupo(Integer maxTeams) {
+        List<Integer> validos = List.of(2, 4, 8, 16);
+        if (!validos.contains(maxTeams)) {
+            throw new IllegalArgumentException("El cupo debe ser 2, 4, 8 o 16.");
+        }
     }
 }

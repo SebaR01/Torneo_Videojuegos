@@ -21,7 +21,7 @@ public class InscriptionController {
 
     private final InscriptionService inscriptionService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER', 'PLAYER')")
     @PostMapping
     public ResponseEntity<InscriptionResponseDTO> register(@RequestBody InscriptionRequestDTO dto) {
         return ResponseEntity.ok(inscriptionService.registerInscription(dto));

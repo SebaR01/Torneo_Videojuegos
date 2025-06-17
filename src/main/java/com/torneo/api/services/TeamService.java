@@ -11,14 +11,12 @@ package com.torneo.api.services;
 
 import com.torneo.api.dto.TeamRequestDTO;
 import com.torneo.api.dto.TeamResponseDTO;
+import com.torneo.api.dto.TeamXPlayerRequestDTO;
 import com.torneo.api.exceptions.NotFoundException;
-import com.torneo.api.models.PlayerEntity;
-import com.torneo.api.models.TeamEntity;
-import com.torneo.api.models.Tournament;
-import com.torneo.api.repository.PlayerRepository;
-import com.torneo.api.repository.TeamRepository;
-import com.torneo.api.repository.TournamentRepository;
+import com.torneo.api.models.*;
+import com.torneo.api.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,39 +27,33 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TeamService {
 
-    private final TeamRepository teamRepository;
-    private final PlayerRepository playerRepository;
-    private final TournamentRepository tournamentRepository;
+    @Autowired
+    private TeamRepository teamRepository;
+    private final UserRepository userRepository;
+    private final TeamXPlayerService teamXPlayerService;
 
     public TeamResponseDTO createTeam(TeamRequestDTO dto) {
-        Tournament tournament = tournamentRepository.findById(dto.getTournamentId())
-                .orElseThrow(() -> new NotFoundException("Torneo no encontrado"));
-
-        List<PlayerEntity> players = playerRepository.findAllById(dto.getPlayerIds());
 
         TeamEntity team = TeamEntity.builder()
                 .name(dto.getName())
-                .tournament(tournament)
-                .players(new ArrayList<>(players))
                 .build();
 
-        return mapToDTO(teamRepository.save(team));
-    }
+        TeamResponseDTO teamResponseDTO = mapToDTO(teamRepository.save(team));
 
-    public TeamResponseDTO updateTeam(Long id, TeamRequestDTO dto) {
-        TeamEntity team = teamRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Equipo no encontrado"));
-
-        Tournament tournament = tournamentRepository.findById(dto.getTournamentId())
-                .orElseThrow(() -> new NotFoundException("Torneo no encontrado"));
-
-        List<PlayerEntity> players = playerRepository.findAllById(dto.getPlayerIds());
-
-        team.setName(dto.getName());
-        team.setTournament(tournament);
-        team.setPlayers(new ArrayList<>(players));
-
-        return mapToDTO(teamRepository.save(team));
+        List<User> players = userRepository.findAllById(dto.getPlayerIds()); //Tengo una listra de los usuarios que van a pertenecer al equipo
+        players.forEach(p -> System.out.println(p));
+        if(players.isEmpty()){ //Corroboro que la lista no esté vacía.
+            System.err.println("Ninguno de los id proporcionados es válido");
+        }else{
+            players.forEach(p -> { //Por cada jugador (p), la idea es ir creando un registro nuevo en la tabla intermedia
+                TeamXPlayerRequestDTO teamXPlayerRequestDTO = TeamXPlayerRequestDTO.builder()
+                        .teamID(teamResponseDTO.getId())
+                        .userID(p.getId())
+                        .build();
+                teamXPlayerService.createTeamXPlayer(teamXPlayerRequestDTO);
+            }); //Voy creando cada registro en la tabla intermedia por cada player que haya.
+        }
+        return  teamResponseDTO;
     }
 
     public void deleteTeam(Long id) {
@@ -83,17 +75,11 @@ public class TeamService {
                 .orElseThrow(() -> new NotFoundException("Equipo no encontrado"));
     }
 
-    public List<TeamResponseDTO> filterTeamsByTournamentId(Long tournamentId) {
-        return teamRepository.findByTournament_Id(tournamentId).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-    }
 
     private TeamResponseDTO mapToDTO(TeamEntity team) {
         return TeamResponseDTO.builder()
                 .id(team.getId())
                 .name(team.getName())
-                .tournamentName(team.getTournament() != null ? team.getTournament().getName() : null)
                 .build();
     }
 }
