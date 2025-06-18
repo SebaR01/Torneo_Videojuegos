@@ -30,4 +30,8 @@ public class TeamEntity {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "captain_id")
+    private User captain;
+
 }

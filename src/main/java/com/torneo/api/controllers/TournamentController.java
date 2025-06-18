@@ -25,7 +25,7 @@ public class TournamentController {
 
     private final TournamentService tournamentService;
 
-   // @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     @PostMapping
     public ResponseEntity<TournamentResponseDTO> createTournament(@Valid @RequestBody TournamentRequestDTO dto) {
         return ResponseEntity.ok(tournamentService.createTournament(dto));

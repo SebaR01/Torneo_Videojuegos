@@ -17,6 +17,8 @@ import com.torneo.api.models.*;
 import com.torneo.api.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,27 +36,43 @@ public class TeamService {
 
     public TeamResponseDTO createTeam(TeamRequestDTO dto) {
 
+        // 1. Crear el equipo
         TeamEntity team = TeamEntity.builder()
                 .name(dto.getName())
                 .build();
 
         TeamResponseDTO teamResponseDTO = mapToDTO(teamRepository.save(team));
 
-        List<User> players = userRepository.findAllById(dto.getPlayerIds()); //Tengo una listra de los usuarios que van a pertenecer al equipo
-        players.forEach(p -> System.out.println(p));
-        if(players.isEmpty()){ //Corroboro que la lista no esté vacía.
+        // 2. Obtener todos los usuarios enviados
+        List<User> players = userRepository.findAllById(dto.getPlayerIds());
+
+        if (players.isEmpty()) {
             System.err.println("Ninguno de los id proporcionados es válido");
-        }else{
-            players.forEach(p -> { //Por cada jugador (p), la idea es ir creando un registro nuevo en la tabla intermedia
-                TeamXPlayerRequestDTO teamXPlayerRequestDTO = TeamXPlayerRequestDTO.builder()
-                        .teamID(teamResponseDTO.getId())
-                        .userID(p.getId())
-                        .build();
-                teamXPlayerService.createTeamXPlayer(teamXPlayerRequestDTO);
-            }); //Voy creando cada registro en la tabla intermedia por cada player que haya.
+            return teamResponseDTO;
         }
-        return  teamResponseDTO;
+
+        // 3. Obtener al usuario autenticado (para marcarlo como capitán)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User creator = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Usuario autenticado no encontrado"));
+
+        // 4. Crear TeamXPlayer por cada jugador (uno de ellos será capitán)
+        for (User p : players) {
+            boolean esCapitan = p.getId().equals(creator.getId());
+
+            TeamXPlayerRequestDTO teamXPlayerRequestDTO = TeamXPlayerRequestDTO.builder()
+                    .teamID(teamResponseDTO.getId())
+                    .userID(p.getId())
+                    .isCaptain(esCapitan)
+                    .build();
+
+            teamXPlayerService.createTeamXPlayer(teamXPlayerRequestDTO);
+        }
+
+        return teamResponseDTO;
     }
+
 
     public void deleteTeam(Long id) {
         if (!teamRepository.existsById(id)) {

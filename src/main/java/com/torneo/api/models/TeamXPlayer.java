@@ -22,5 +22,8 @@ public class TeamXPlayer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id", nullable = false)
     private User user;
+
+    @Column(name = "is_captain")
+    private boolean isCaptain;
 }
 

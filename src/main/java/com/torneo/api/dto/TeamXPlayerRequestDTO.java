@@ -18,4 +18,7 @@ public class TeamXPlayerRequestDTO
     private Long teamID;
 
     private Long userID;
+
+    private boolean isCaptain;
+
 }

@@ -2,16 +2,22 @@ package com.torneo.api.services;
 
 import com.torneo.api.dto.InscriptionRequestDTO;
 import com.torneo.api.dto.InscriptionResponseDTO;
+import com.torneo.api.enums.GamesState;
 import com.torneo.api.exceptions.NotFoundException;
 import com.torneo.api.models.Inscription;
 import com.torneo.api.models.TeamEntity;
-import com.torneo.api.models.Tournament;
 import com.torneo.api.models.TeamXPlayer;
+import com.torneo.api.models.Tournament;
+import com.torneo.api.models.User;
 import com.torneo.api.repository.InscriptionRepository;
 import com.torneo.api.repository.TeamRepository;
+import com.torneo.api.repository.TeamXPlayerRepository;
 import com.torneo.api.repository.TournamentRepository;
+import com.torneo.api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,9 +27,15 @@ import java.util.stream.Collectors;
  * Servicio que gestiona las inscripciones de equipos a torneos.
  *
  * ✔ Valida que el equipo y el torneo existan.
- * ✔ Valida que no se repita una inscripción.
- * ✔ Verifica el cupo antes de aceptar.
- * ✔ Si se completa el cupo, genera partidos y envía mails.
+ * ✔ Verifica que el usuario que intenta inscribir sea parte del equipo (nuevo).
+ * ✔ Evita inscripciones duplicadas al mismo torneo.
+ * ✔ Controla que el cupo máximo no haya sido alcanzado.
+ * ✔ Si se completa el cupo, cambia el estado del torneo a ACTIVO.
+ * ✔ Genera los partidos iniciales mediante el PhaseService.
+ * ✔ Envía un email a cada jugador cuando el torneo comienza.
+ *
+ * Esta clase es clave para el flujo de inscripción, ya que asegura la integridad
+ * y lógica de negocio antes de permitir registrar un equipo en un torneo.
  */
 @Service
 @RequiredArgsConstructor
@@ -35,20 +47,41 @@ public class InscriptionService {
     private final EmailService emailService;
     private final PhaseService phaseService;
     private final TeamXPlayerService teamXPlayerService;
+    private final TeamXPlayerRepository teamXPlayerRepository;
+    private final UserRepository userRepository;
 
     public InscriptionResponseDTO registerInscription(InscriptionRequestDTO dto) {
+        // Validar existencia del equipo
         TeamEntity team = teamRepository.findById(dto.getTeamId())
                 .orElseThrow(() -> new NotFoundException("Equipo no encontrado"));
 
+        // Validar existencia del torneo
         Tournament tournament = tournamentRepository.findById(dto.getTournamentId())
                 .orElseThrow(() -> new NotFoundException("Torneo no encontrado"));
 
-        // Validar si ya estaba inscripto
+        // Validar estado del torneo
+        if (!tournament.getState().equals(GamesState.INSCRIPTION)) {
+            throw new IllegalStateException("El torneo no está disponible para inscripciones.");
+        }
+
+        // Obtener el usuario autenticado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+
+        // Verificar si el usuario pertenece al equipo
+        List<TeamXPlayer> asociaciones = teamXPlayerRepository.findByUser_IdAndTeamEntity_Id(currentUser.getId(), dto.getTeamId());
+        if (asociaciones.isEmpty()) {
+            throw new IllegalArgumentException("No pertenecés al equipo que estás intentando inscribir.");
+        }
+
+        // Validar si ya está inscripto
         if (inscriptionRepository.findByTeam_IdAndTournament_Id(team.getId(), tournament.getId()).isPresent()) {
             throw new IllegalArgumentException("Este equipo ya está inscripto en este torneo.");
         }
 
-        // Validar cupo
+        // Validar cupo disponible
         List<Inscription> inscripcionesExistentes = inscriptionRepository.findByTournamentId(tournament.getId());
         if (inscripcionesExistentes.size() >= tournament.getMaxTeams()) {
             throw new IllegalStateException("El cupo del torneo ya está completo.");
@@ -65,16 +98,19 @@ public class InscriptionService {
         // Verificar si se completó el cupo con esta inscripción
         List<Inscription> inscripcionesTotales = inscriptionRepository.findByTournamentId(tournament.getId());
         if (inscripcionesTotales.size() == tournament.getMaxTeams()) {
+            // Cambiar el estado a ACTIVO
+            tournament.setState(GamesState.ACTIVE);
+            tournamentRepository.save(tournament);
 
-            // Obtener los equipos
+            // Obtener todos los equipos
             List<TeamEntity> equipos = inscripcionesTotales.stream()
                     .map(Inscription::getTeam)
                     .collect(Collectors.toList());
 
-            // Generar partidos iniciales
+            // Generar los partidos iniciales
             phaseService.generateInitialPhase(tournament, equipos);
 
-            // Enviar mail a todos los jugadores
+            // Enviar correo a los jugadores de cada equipo
             for (TeamEntity equipo : equipos) {
                 List<TeamXPlayer> jugadores = teamXPlayerService.getByTeamId(equipo.getId());
                 for (TeamXPlayer txp : jugadores) {
@@ -127,5 +163,4 @@ public class InscriptionService {
                 .tournamentName(i.getTournament().getName())
                 .build();
     }
-
 }

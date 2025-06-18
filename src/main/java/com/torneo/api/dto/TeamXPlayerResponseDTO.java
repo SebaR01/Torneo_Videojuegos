@@ -14,4 +14,5 @@ public class TeamXPlayerResponseDTO
     private Long id;
     private Long teamID;
     private Long userID;
+    private boolean isCaptain;
 }
