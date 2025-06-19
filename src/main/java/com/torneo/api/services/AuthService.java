@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
+
 /**
  * Servicio que gestiona el registro y login de usuarios.
  * En el registro encripta la contraseña y genera el token.
@@ -55,5 +57,15 @@ public class AuthService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         String token = jwtService.generateToken(userDetails);
         return new LoginResponse(token);
+    }
+
+    public void updateUser(User user)
+    {
+        userRepository.save(user);
+    }
+
+    public  void deleteuser(long id)
+    {
+        userRepository.deleteById(id);
     }
 }

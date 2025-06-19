@@ -1,11 +1,13 @@
 package com.torneo.api.services;
 
+import com.torneo.api.dto.RegisterRequest;
 import com.torneo.api.models.User;
 import com.torneo.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 /**
@@ -25,8 +27,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
     }
 
+
+
     public Optional<User> getById(Long id)
     {
         return userRepository.findById(id);
     }
+
+
 }

@@ -34,4 +34,12 @@ public class TeamEntity {
     @JoinColumn(name = "captain_id")
     private User captain;
 
+    @OneToMany(mappedBy = "teamEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TeamXPlayer> teamXPlayers;
+
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Inscription> inscriptions;
+
+
+
 }

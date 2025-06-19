@@ -11,6 +11,7 @@ import lombok.*;
 @Entity
 @Table(name = "teamXplayer")
 public class TeamXPlayer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,4 +27,6 @@ public class TeamXPlayer {
     @Column(name = "is_captain")
     private boolean isCaptain;
 }
+
+
 

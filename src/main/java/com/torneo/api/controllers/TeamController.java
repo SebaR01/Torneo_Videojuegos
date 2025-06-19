@@ -109,4 +109,10 @@ public class TeamController {
         teamService.deleteTeam(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/api/teams")
+    public void updateTeam(
+            @RequestBody @Parameter(description = "Datos para actualizar un nuevo equipo") TeamResponseDTO teamDTO) {
+        teamService.updateTeam(teamDTO);
+    }
 }

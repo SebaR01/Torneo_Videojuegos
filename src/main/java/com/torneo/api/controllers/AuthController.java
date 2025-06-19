@@ -3,6 +3,7 @@ package com.torneo.api.controllers;
 import com.torneo.api.dto.LoginRequest;
 import com.torneo.api.dto.LoginResponse;
 import com.torneo.api.dto.RegisterRequest;
+import com.torneo.api.models.User;
 import com.torneo.api.services.AuthService;
 import com.torneo.api.services.EmailService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,6 +64,19 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(request));
     }
 
+    @PutMapping("/update")
+    public void update(
+                       @Valid @RequestBody @Parameter(description = "Datos para registrar un nuevo usuario") User user)
+    {
+        authService.updateUser(user);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("{id}")
+    public void delete(@PathVariable Long id) {
+        authService.deleteuser(id);
+    }
+
     /**
      * Endpoint para autenticar a un usuario y generar un token JWT.
      *
@@ -81,4 +96,5 @@ public class AuthController {
             @Valid @RequestBody @Parameter(description = "Credenciales de acceso para login") LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
+
 }

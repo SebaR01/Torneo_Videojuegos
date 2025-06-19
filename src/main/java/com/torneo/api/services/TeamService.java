@@ -34,6 +34,15 @@ public class TeamService {
     private final UserRepository userRepository;
     private final TeamXPlayerService teamXPlayerService;
 
+    public void updateTeam(TeamResponseDTO dto)
+    {
+        TeamEntity team = TeamEntity.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .build();
+        teamRepository.save(team);
+    }
+
     public TeamResponseDTO createTeam(TeamRequestDTO dto) {
 
         // 1. Crear el equipo

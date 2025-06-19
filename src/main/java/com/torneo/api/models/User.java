@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Entidad que representa a un usuario del sistema.
@@ -42,6 +43,10 @@ public class User implements UserDetails {
 
     @Column(unique = true, nullable = false)
     private String email;
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TeamXPlayer> teamXPlayers;
 
     // Métodos requeridos por UserDetails
 
